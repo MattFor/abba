@@ -3,4 +3,6 @@ project(abba)
 
 set(CMAKE_CXX_STANDARD 26)
 
-add_executable(abba main.cpp)
+add_executable(abba main.cpp
+        src/settings/Settings.cpp
+        include/settings/Settings.h)
