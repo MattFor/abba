@@ -15,4 +15,10 @@ void p(const std::string& text)
 int main()
 {
     p("test");
+
+    // 1. Load settings
+
+    // 2. Attach to binary
+
+    // 3. Create scanner loops
 }
