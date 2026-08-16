@@ -181,7 +181,7 @@ namespace MemoryScannerTests
 
     void read_struct()
     {
-        auto scanner = createAttachedScanner();
+        const auto scanner = createAttachedScanner();
 
         constexpr TestData expected{
             .first = 0x12345678,
@@ -258,7 +258,7 @@ namespace MemoryScannerTests
 
     void reject_null_buffer()
     {
-        auto scanner = createAttachedScanner();
+        const auto scanner = createAttachedScanner();
 
         constexpr std::uint64_t value = 123;
 
@@ -271,7 +271,7 @@ namespace MemoryScannerTests
 
     void read_zero_bytes()
     {
-        auto scanner = createAttachedScanner();
+        const auto scanner = createAttachedScanner();
 
         constexpr std::uint64_t value = 123;
 

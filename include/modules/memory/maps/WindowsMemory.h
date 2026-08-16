@@ -4,8 +4,8 @@
 
 #ifndef ABBA_WINDOWSMEMORY_H
 #define ABBA_WINDOWSMEMORY_H
-#include "MemoryMap.h"
 
+#include "MemoryMap.h"
 
 class WindowsMemory : public MemoryMap
 {};

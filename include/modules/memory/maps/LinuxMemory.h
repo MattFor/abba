@@ -4,8 +4,8 @@
 
 #ifndef ABBA_LINUXMEMORY_H
 #define ABBA_LINUXMEMORY_H
-#include "MemoryMap.h"
 
+#include "MemoryMap.h"
 
 class LinuxMemory : public MemoryMap
 {};
