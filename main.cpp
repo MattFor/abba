@@ -4,6 +4,7 @@
 int main()
 {
     p("Starting program...");
+    //NOLINTNEXTLINE
     p("Current platform: {}", platform == Platform::Linux ? "Linux" : "Windows");
 
     // 1. Load settings
