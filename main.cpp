@@ -10,7 +10,7 @@ int main()
     if (!settings.loadConfig("./config/program/dev.ini"))
     {
         p("[ERROR] Failed to obtain development config!");
-        return 1;
+        return EXIT_FAILURE;
     }
 
     auto* dev_ini_manager = settings.getIniManager("./config/program/dev.ini");

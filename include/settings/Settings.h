@@ -17,7 +17,7 @@ class Settings
     /**
      * Ini file loader holder.
      *
-     * @link {https://github.com/dujingning/inicpp}
+     * @see https://github.com/dujingning/inicpp
      */
     struct Loader
     {

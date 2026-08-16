@@ -41,7 +41,7 @@ bool Settings::loadConfig(const std::filesystem::path& configPath)
 
     const auto alreadyLoaded = std::ranges::find_if(this->loaders, [&](const Loader& config)
     {
-        return config.path == configPath;
+        return config.path == absolutePath;
     });
 
     if (alreadyLoaded != loaders.end())
@@ -50,7 +50,7 @@ bool Settings::loadConfig(const std::filesystem::path& configPath)
         return false;
     }
 
-    loaders.emplace_back(Loader{ configPath, std::make_unique<inicpp::IniManager>(configPath.string()) });
+    loaders.emplace_back(Loader{ absolutePath, std::make_unique<inicpp::IniManager>(configPath.string()) });
 
     p("[SUCCESS] .ini config {} loaded!", absolutePath.string());
 
@@ -70,7 +70,7 @@ inicpp::IniManager* Settings::getIniManager(const std::filesystem::path& configP
 
     const auto loader = std::ranges::find_if(this->loaders, [&](const Loader& config)
     {
-        return config.path == configPath;
+        return config.path == absolutePath;
     });
 
     if (loader == this->loaders.end())
