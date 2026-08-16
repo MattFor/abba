@@ -8,12 +8,34 @@
 #include <vector>
 #include <filesystem>
 
-#include "../../lib/inicpp/inicpp.hpp"
+#include <inicpp/inicpp.hpp>
 
 #include "../utilities/Logger.h"
 
+// Get the platform early
+enum class Platform
+{
+    Linux,
+    Windows
+};
+
+constexpr Platform getPlatform()
+{
+#if defined(_WIN32)
+    return Platform::Windows;
+#elif defined(__linux__)
+    return Platform::Linux;
+#else
+#error "Unsupported platform"
+#endif
+}
+
+inline static constexpr Platform platform = getPlatform();
+
 class Settings
 {
+    Settings() = default;
+
     /**
      * Ini file loader holder.
      *
@@ -28,7 +50,12 @@ class Settings
     std::vector<Loader> loaders{};
 
 public:
-    Settings() = default;
+    // Make it a singleton
+    static Settings& instance()
+    {
+        static Settings settings;
+        return settings;
+    }
 
     /**
      * Load an .ini file config into memory.

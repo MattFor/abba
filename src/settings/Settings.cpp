@@ -2,10 +2,10 @@
 // Created by mattfor on 8/11/26.
 //
 
-#include "../../include/settings/Settings.h"
+#include "settings/Settings.h"
 
-#include "../../include/utilities/Logger.h"
-#include "../../include/utilities/VectorHelpers.h"
+#include "utilities/Logger.h"
+#include "utilities/VectorHelpers.h"
 
 /**
  * Construct settings validator?
@@ -35,7 +35,7 @@ bool Settings::loadConfig(const std::filesystem::path& configPath)
     // Guards
     if (configPath.empty())
     {
-        // TODO: log err here
+        p("[ERROR] Config path is empty!");
         return false;
     }
 

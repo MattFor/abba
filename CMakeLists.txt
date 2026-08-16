@@ -10,6 +10,14 @@ add_library(abba_core
         src/settings/Settings.cpp
         src/utilities/FileOperations.cpp
         src/utilities/Hashing.cpp
+        src/modules/memory/MemoryScanner.cpp
+        include/modules/memory/MemoryScanner.h
+        src/modules/memory/maps/MemoryMap.cpp
+        include/modules/memory/maps/MemoryMap.h
+        src/modules/memory/maps/LinuxMemory.cpp
+        include/modules/memory/maps/LinuxMemory.h
+        src/modules/memory/maps/WindowsMemory.cpp
+        include/modules/memory/maps/WindowsMemory.h
 )
 
 target_include_directories(abba_core
@@ -44,11 +52,11 @@ enable_testing()
 
 add_executable(abba_tests
         tests/main.cpp
-        tests/SettingsTests.cpp
-        tests/HashingTests.cpp
+        tests/suite/SettingsTests.cpp
+        tests/suite/HashingTests.cpp
         tests/helpers/TempFile.h
         tests/helpers/TestRunner.h
-
+        tests/suite/MemoryScannerTests.cpp
 )
 
 target_link_libraries(abba_tests

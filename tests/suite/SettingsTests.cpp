@@ -11,7 +11,7 @@ namespace SettingsTests
 {
     void load_valid_config()
     {
-        if (Settings settings; !settings.loadConfig("config/program/dev.ini"))
+        if (auto& settings = Settings::instance(); !settings.loadConfig("tests/config/test.ini"))
         {
             throw std::runtime_error("load_valid_config: loadConfig() returned false");
         }
@@ -19,14 +19,9 @@ namespace SettingsTests
 
     void get_loaded_manager()
     {
-        Settings settings;
+        auto& settings = Settings::instance();
 
-        const auto path = "config/program/dev.ini";
-
-        if (!settings.loadConfig(path))
-        {
-            throw std::runtime_error("get_loaded_manager: failed to load config");
-        }
+        const auto path = "tests/config/test.ini";
 
         if (const auto* manager = settings.getIniManager(path); manager == nullptr)
         {
@@ -36,14 +31,9 @@ namespace SettingsTests
 
     void read_value()
     {
-        Settings settings;
+        auto& settings = Settings::instance();
 
-        const auto path = "config/program/dev.ini";
-
-        if (!settings.loadConfig(path))
-        {
-            throw std::runtime_error("read_value: failed to load config");
-        }
+        const auto path = "tests/config/test.ini";
 
         auto* manager = settings.getIniManager(path);
 
@@ -60,7 +50,7 @@ namespace SettingsTests
 
     void reject_missing_config()
     {
-        if (Settings settings; settings.loadConfig("config/does_not_exist.ini"))
+        if (auto& settings = Settings::instance(); settings.loadConfig("config/does_not_exist.ini"))
         {
             throw std::runtime_error("reject_missing_config: missing config was accepted");
         }
@@ -68,9 +58,9 @@ namespace SettingsTests
 
     void reject_duplicate_config()
     {
-        Settings settings;
+        auto& settings = Settings::instance();
 
-        const auto path = "config/program/dev.ini";
+        const auto path = "tests/config/duplicate_test.ini";
 
         if (!settings.loadConfig(path))
         {
@@ -85,9 +75,9 @@ namespace SettingsTests
 
     void missing_manager_returns_null()
     {
-        Settings settings;
+        auto& settings = Settings::instance();
 
-        if (const auto* manager = settings.getIniManager("config/program/dev.ini"); manager != nullptr)
+        if (const auto* manager = settings.getIniManager("tests/config/never_loaded.ini"); manager != nullptr)
         {
             throw std::runtime_error("missing_manager_returns_null: expected nullptr");
         }

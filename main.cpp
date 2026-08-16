@@ -4,22 +4,22 @@
 int main()
 {
     p("Starting program...");
+    p("Current platform: {}", platform == Platform::Linux ? "Linux" : "Windows");
 
-    Settings settings{};
+    // 1. Load settings
+    auto& settings = Settings::instance();
 
-    if (!settings.loadConfig("./config/program/dev.ini"))
+    if (!settings.loadConfig("./config/program/settings.ini"))
     {
         p("[ERROR] Failed to obtain development config!");
         return EXIT_FAILURE;
     }
 
-    auto* dev_ini_manager = settings.getIniManager("./config/program/dev.ini");
+    auto* dev_ini_manager = settings.getIniManager("./config/program/settings.ini");
 
-    const auto value = ( *dev_ini_manager )["test"]["test"].get<std::string>();
-
-    std::print("The value of [test][test] is {}\n", value);
-
-    // 1. Load settings
+    p("Checking memory scanner module settings...");
+    const auto memory_scanner_on = ( *dev_ini_manager )["memory"]["on"].get<bool>();
+    p("{}Memory scanner is {}\n", memory_scanner_on ? "[SUCCESS] " : "", memory_scanner_on ? "ON" : "OFF");
 
     // 2. Attach to binary
 

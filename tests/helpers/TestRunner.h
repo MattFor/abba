@@ -6,9 +6,9 @@
 #define ABBA_TESTRUNNER_H
 
 #include <span>
-#include <print>
 #include <string_view>
 
+#include "utilities/Logger.h"
 
 struct Test
 {
@@ -16,21 +16,25 @@ struct Test
     void (*          function)();
 };
 
-inline bool runTests(std::span<const Test> tests, std::size_t& passed, std::size_t& failed, std::size_t& total)
+inline bool runTests(std::span<const Test> tests, std::size_t& passed, std::size_t& failed, std::size_t& total, std::size_t& current)
 {
     total += tests.size();
+
+    int i = 0;
     for (const auto& [name, function] : tests)
     {
+        p("{}|{}. Testing {}", ++current, ++i, name);
+
         try
         {
             function();
 
-            std::print("[PASS] {}\n", name);
+            p("[PASS] {}\n\n", name);
             ++passed;
         }
         catch (const std::exception& e)
         {
-            std::print("[FAIL] {}\n", e.what());
+            p("[FAIL] {}\n\n", e.what());
 
             ++failed;
 
@@ -38,7 +42,7 @@ inline bool runTests(std::span<const Test> tests, std::size_t& passed, std::size
         }
         catch (...)
         {
-            std::print("[FAIL] Unknown exception\n");
+            p("[FAIL] Unknown exception\n\n");
 
             ++failed;
 
