@@ -6,75 +6,78 @@
 
 #include <fstream>
 
-std::vector<FileOperations::FileInfo> scanInternal(const std::filesystem::path& directory, const bool recursive)
+namespace
 {
-    std::vector<FileOperations::FileInfo> result;
-
-    std::error_code ec;
-
-    if (!std::filesystem::exists(directory, ec) || !std::filesystem::is_directory(directory, ec))
+    std::vector<FileOperations::FileInfo> scanInternal(const std::filesystem::path& directory, const bool recursive)
     {
+        std::vector<FileOperations::FileInfo> result;
+
+        std::error_code ec;
+
+        if (!std::filesystem::exists(directory, ec) || !std::filesystem::is_directory(directory, ec))
+        {
+            return result;
+        }
+
+        const auto addFile = [&result](const std::filesystem::directory_entry& entry)
+        {
+            std::error_code fileEc;
+
+            // Follow neither directory nor symlink traversal.
+            if (const auto status = std::filesystem::symlink_status(entry, fileEc); fileEc || !std::filesystem::is_regular_file(status))
+            {
+                return;
+            }
+
+            FileOperations::FileInfo info;
+            info.is_regular_file = true;
+            info.path            = entry.path();
+            info.is_symlink      = entry.is_symlink(fileEc);
+            info.size            = entry.file_size(fileEc);
+
+            if (fileEc)
+            {
+                info.size = 0;
+            }
+
+            result.emplace_back(std::move(info));
+        };
+
+        if (recursive)
+        {
+            std::filesystem::recursive_directory_iterator iterator(directory, std::filesystem::directory_options::skip_permission_denied, ec);
+
+            const std::filesystem::recursive_directory_iterator end{};
+
+            while (iterator != end)
+            {
+                if (!ec)
+                {
+                    addFile(*iterator);
+                }
+
+                iterator.increment(ec);
+            }
+        }
+        else
+        {
+            std::filesystem::directory_iterator iterator(directory, std::filesystem::directory_options::skip_permission_denied, ec);
+
+            const std::filesystem::directory_iterator end{};
+
+            while (iterator != end)
+            {
+                if (!ec)
+                {
+                    addFile(*iterator);
+                }
+
+                iterator.increment(ec);
+            }
+        }
+
         return result;
     }
-
-    const auto addFile = [&result](const std::filesystem::directory_entry& entry)
-    {
-        std::error_code fileEc;
-
-        // Follow neither directory nor symlink traversal.
-        if (!entry.is_regular_file(fileEc))
-        {
-            return;
-        }
-
-        FileOperations::FileInfo info;
-        info.is_regular_file = true;
-        info.path            = entry.path();
-        info.is_symlink      = entry.is_symlink(fileEc);
-        info.size            = entry.file_size(fileEc);
-
-        if (fileEc)
-        {
-            info.size = 0;
-        }
-
-        result.emplace_back(std::move(info));
-    };
-
-    if (recursive)
-    {
-        std::filesystem::recursive_directory_iterator iterator(directory, std::filesystem::directory_options::skip_permission_denied, ec);
-
-        const std::filesystem::recursive_directory_iterator end{};
-
-        while (iterator != end)
-        {
-            if (!ec)
-            {
-                addFile(*iterator);
-            }
-
-            iterator.increment(ec);
-        }
-    }
-    else
-    {
-        std::filesystem::directory_iterator iterator(directory, std::filesystem::directory_options::skip_permission_denied, ec);
-
-        const std::filesystem::directory_iterator end{};
-
-        while (iterator != end)
-        {
-            if (!ec)
-            {
-                addFile(*iterator);
-            }
-
-            iterator.increment(ec);
-        }
-    }
-
-    return result;
 }
 
 std::vector<FileOperations::FileInfo> FileOperations::scan(const std::filesystem::path& directory, const bool recursive)

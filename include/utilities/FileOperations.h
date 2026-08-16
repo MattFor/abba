@@ -6,9 +6,10 @@
 #define ABBA_FILEOPERATIONS_H
 
 #include <string>
-#include <vector>
 #include <optional>
 #include <filesystem>
+
+#include "VectorHelpers.h"
 
 class FileOperations
 {
