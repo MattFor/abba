@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(abba_core
         src/settings/Settings.cpp
         src/utilities/FileOperations.cpp
+        src/utilities/Hashing.cpp
 )
 
 target_include_directories(abba_core
@@ -30,6 +31,7 @@ add_executable(abba
 target_link_libraries(abba
         PRIVATE
         abba_core
+        stdc++exp
 )
 
 target_compile_definitions(abba PRIVATE
@@ -43,11 +45,16 @@ enable_testing()
 add_executable(abba_tests
         tests/main.cpp
         tests/SettingsTests.cpp
+        tests/HashingTests.cpp
+        tests/helpers/TempFile.h
+        tests/helpers/TestRunner.h
+
 )
 
 target_link_libraries(abba_tests
         PRIVATE
         abba_core
+        stdc++exp
 )
 
 target_compile_definitions(abba_tests PRIVATE

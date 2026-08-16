@@ -1,3 +1,6 @@
 [submodule "lib/inicpp"]
 	path = lib/inicpp
 	url = https://github.com/dujingning/inicpp
+[submodule "lib/PicoSHA2"]
+	path = lib/PicoSHA2
+	url = https://github.com/okdshin/PicoSHA2.git
