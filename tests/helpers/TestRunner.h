@@ -4,17 +4,20 @@
 
 #ifndef ABBA_TESTRUNNER_H
 #define ABBA_TESTRUNNER_H
+
 #include <span>
-#include <string_view>
 #include <print>
+#include <string_view>
 
 
 struct Test
 {
     std::string_view name;
-    void (* function)();
+    void (*          function)();
 };
-inline bool runTests(std::span<const Test> tests, std::size_t &passed, std::size_t &failed, std::size_t &total) {
+
+inline bool runTests(std::span<const Test> tests, std::size_t& passed, std::size_t& failed, std::size_t& total)
+{
     total += tests.size();
     for (const auto& [name, function] : tests)
     {

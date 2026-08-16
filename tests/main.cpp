@@ -16,7 +16,9 @@ namespace SettingsTests
     void reject_duplicate_config();
     void missing_manager_returns_null();
 }
-namespace HashingTests {
+
+namespace HashingTests
+{
     void one_byte_correct_hash();
     void dummy_file_correct_hash();
 }
@@ -24,26 +26,22 @@ namespace HashingTests {
 
 int main()
 {
-    constexpr Test tests_settings[] = {
-        { "Settings::loadConfig valid config", SettingsTests::load_valid_config },
-        { "Settings::getIniManager loaded config", SettingsTests::get_loaded_manager },
-        { "Settings::read value", SettingsTests::read_value },
-        { "Settings::reject missing config", SettingsTests::reject_missing_config },
-        { "Settings::reject duplicate config", SettingsTests::reject_duplicate_config },
-        { "Settings::missing manager returns null", SettingsTests::missing_manager_returns_null },
-
-    };
-    constexpr Test tests_hashing[] = {
-        {"Hashing::one byte returns correct hash", HashingTests::one_byte_correct_hash},
-        {"Hashing::dummy file returns correct hash", HashingTests::dummy_file_correct_hash}
-    };
+    constexpr Test tests_settings[] = { { "Settings::loadConfig valid config", SettingsTests::load_valid_config }, { "Settings::getIniManager loaded config", SettingsTests::get_loaded_manager }, { "Settings::read value", SettingsTests::read_value }, { "Settings::reject missing config", SettingsTests::reject_missing_config }, { "Settings::reject duplicate config", SettingsTests::reject_duplicate_config }, { "Settings::missing manager returns null", SettingsTests::missing_manager_returns_null }, };
+    constexpr Test tests_hashing[]  = { { "Hashing::one byte returns correct hash", HashingTests::one_byte_correct_hash }, { "Hashing::dummy file returns correct hash", HashingTests::dummy_file_correct_hash } };
 
     std::size_t passed = 0;
     std::size_t failed = 0;
-    std::size_t total = 0;
+    std::size_t total  = 0;
 
-    if (runTests(tests_settings, passed, failed,total)) return EXIT_FAILURE;
-    if (runTests(tests_hashing, passed, failed,total)) return EXIT_FAILURE;
+    if (runTests(tests_settings, passed, failed, total))
+    {
+        return EXIT_FAILURE;
+    }
+
+    if (runTests(tests_hashing, passed, failed, total))
+    {
+        return EXIT_FAILURE;
+    }
 
     std::print("\n {}/{} test passed, {} failed\n", passed, total, failed);
 

@@ -4,18 +4,18 @@
 
 #ifndef ABBA_HASHING_H
 #define ABBA_HASHING_H
-#include <cstddef>
-#include <cstdint>
-#include <optional>
+
 #include <string>
 #include <vector>
+#include <cstddef>
+#include <optional>
 #include <filesystem>
+
 #include "FileOperations.h"
 
-
-
-class Hashing {
-    public:
+class Hashing
+{
+public:
     /*
      * Create a hash from data in bytes
      *
@@ -23,12 +23,11 @@ class Hashing {
      */
     [[nodiscard]] static std::string hashFromData(const std::vector<std::byte>& data);
 
-
     /*
      * Create a hash by reading data from path from object
      */
-    [[nodiscard]] static std::optional<std::string> hashFromFile(const FileOperations::FileInfo& file );
-    [[nodiscard]] static std::optional<std::string> hashFromFile(const std::filesystem::path &path);
+    [[nodiscard]] static std::optional<std::string> hashFromFile(const std::filesystem::path& path);
+    [[nodiscard]] static std::optional<std::string> hashFromFile(const FileOperations::FileInfo& file);
 };
 
 
