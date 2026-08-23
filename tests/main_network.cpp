@@ -32,7 +32,9 @@ namespace
         HANDLE              stdInWrite{
             INVALID_HANDLE_VALUE
         };
-        HANDLE stdOutRead{INVALID_HANDLE_VALUE};
+        HANDLE stdOutRead{
+            INVALID_HANDLE_VALUE
+        };
     };
 
     [[nodiscard]] bool spawnSocketTarget(SpawnedTarget& out)
@@ -56,8 +58,12 @@ namespace
         }
 
 
-        HANDLE childStdOutRead{ INVALID_HANDLE_VALUE };
-        HANDLE childStdOutWrite{ INVALID_HANDLE_VALUE };
+        HANDLE childStdOutRead{
+            INVALID_HANDLE_VALUE
+        };
+        HANDLE childStdOutWrite{
+            INVALID_HANDLE_VALUE
+        };
         if (!CreatePipe(&childStdOutRead, &childStdOutWrite, &sAttr, 0))
         {
             p("[ERROR] CreatePipe (stdout) failed: {}", GetLastError());
@@ -115,8 +121,12 @@ namespace
     struct StdoutDrain
     {
         std::thread       thread;
-        std::atomic<bool> ready{ false };
-        std::atomic<bool> died{ false };
+        std::atomic<bool> ready{
+            false
+        };
+        std::atomic<bool> died{
+            false
+        };
 
         void start(HANDLE stdoutRead)
         {

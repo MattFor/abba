@@ -10,11 +10,14 @@
 
 namespace netcap
 {
-
     struct ValidationResult
     {
-        bool        valid{ true };
-        std::string reason{"Packet was correct!"};
+        bool valid{
+            true
+        };
+        std::string reason{
+            "Packet was correct!"
+        };
     };
 
     /**
@@ -32,7 +35,6 @@ namespace netcap
 
         [[nodiscard]] virtual ValidationResult validate(const PacketContext& packet) const = 0;
     };
-
 } // namespace netcap
 
 #endif //ABBA_IPACKETVALIDATOR_H

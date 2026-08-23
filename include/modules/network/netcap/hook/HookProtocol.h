@@ -16,6 +16,7 @@ namespace netcap::hookproto
     {
         return LR"(\\.\pipe\abba_)";
     }
+
     inline const wchar_t* readyEventNamePrefix()
     {
         return L"abba_hook_ready_";
@@ -23,7 +24,9 @@ namespace netcap::hookproto
 #pragma pack(push, 1)
     struct FrameHeader
     {
-        std::uint32_t magic{ kMagic };
+        std::uint32_t magic{
+            kMagic
+        };
         std::uint32_t process_id{};
         std::uint8_t  direction{};
         std::uint64_t timestamp_ns{};

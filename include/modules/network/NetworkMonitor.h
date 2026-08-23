@@ -19,6 +19,7 @@ struct ImportedFunction
     std::string dllName{};
     std::string functionName{};
 };
+
 std::optional<std::vector<ImportedFunction>> listImports(HMODULE module);
 
 class NetworkMonitor
@@ -28,15 +29,16 @@ public:
 
     NetworkMonitor();
     ~NetworkMonitor();
-    NetworkMonitor(const NetworkMonitor&) = delete;
+    NetworkMonitor(const NetworkMonitor&)            = delete;
     NetworkMonitor& operator=(const NetworkMonitor&) = delete;
 
     [[nodiscard]] bool attach(std::uint32_t processId);
-    void detach();
+    void               detach();
     [[nodiscard]] bool isAttached() const;
 
     void addValidator(std::shared_ptr<netcap::IPacketValidator> validator) const;
     void setInvalidPacketCallback(InvalidPacketCallback callback);
+
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;

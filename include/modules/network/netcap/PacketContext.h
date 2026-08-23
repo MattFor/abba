@@ -10,7 +10,6 @@
 
 namespace netcap
 {
-
     enum class PacketDirection : std::uint8_t
     {
         Send = 0,
@@ -23,9 +22,9 @@ namespace netcap
      */
     struct PacketContext
     {
-        std::uint32_t              processId{};
-        PacketDirection             direction{};
-        std::uint64_t               timestamp_ns{};
+        std::uint32_t   processId{};
+        PacketDirection direction{};
+        std::uint64_t   timestamp_ns{};
 
         /**
          * Raw bytes exactly as passed to / returned from the socket call, (send/recv) TODO: (/WSASend/WSARecv)
@@ -34,7 +33,6 @@ namespace netcap
          */
         std::vector<std::uint8_t> data{};
     };
-
 } // namespace netcap
 
 #endif //ABBA_PACKETCONTEXT_H
