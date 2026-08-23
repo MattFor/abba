@@ -19,7 +19,6 @@ bool Settings::loadConfig(const std::filesystem::path& configPath)
 {
     const std::filesystem::path absolutePath = std::filesystem::absolute(configPath);
     p("Attempting to load .ini config for {}", absolutePath.string());
-
     if (!std::filesystem::exists(absolutePath))
     {
         p("[ERROR] Config file does not exist: {}", absolutePath.string());
