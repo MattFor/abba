@@ -1,20 +1,22 @@
 //
 // Created by Grzegorz on 8/23/2026.
 //
+
+#if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <mutex>
 #include <atomic>
 #include <chrono>
-#include <filesystem>
-#include <mutex>
 #include <string>
 #include <thread>
+#include <filesystem>
 #include <condition_variable>
 
+#include "utilities/Logger.h"
 #include "modules/network/NetworkMonitor.h"
 #include "modules/network/netcap/PacketValidator.h"
-#include "utilities/Logger.h"
 
 
 namespace
@@ -256,3 +258,4 @@ int main()
 
     return EXIT_SUCCESS;
 }
+#endif

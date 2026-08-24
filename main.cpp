@@ -26,6 +26,9 @@ int main()
     p("{}Memory scanner is {}\n", memory_scanner_on ? "[SUCCESS] " : "", memory_scanner_on ? "ON" : "OFF");
 
     // 2. Attach to binary
+
+    // Windows
+#if defined(_WIN32)
     const std::uint32_t kTempTargetPid = 0; // TODO: Replace with real target binary, from settings, from wherever
 
     NetworkMonitor networkMonitor;
@@ -44,5 +47,7 @@ int main()
     {
         p("[ERROR] Failed to attach NetworkMonitor");
     }
+#endif
+
     // 3. Create scanner loops
 }

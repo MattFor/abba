@@ -7,9 +7,10 @@
 
 #include <cstdint>
 
+/// Windows!
 namespace netcap::hookproto
 {
-    inline constexpr std::uint32_t kMagic           = 0x50414E43;
+    inline constexpr std::uint32_t kMagic           = 0x50414E43; /// Arbitrary ID
     inline constexpr std::uint32_t kMaxPayloadBytes = 4096;
 
     inline const wchar_t* pipeNamePrefix()

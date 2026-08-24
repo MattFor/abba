@@ -5,6 +5,7 @@
 #include <print>
 #include <cstdlib>
 #include <string_view>
+
 #include "helpers/TestRunner.h"
 
 namespace SettingsTests
@@ -42,86 +43,86 @@ int main()
 {
     constexpr Test tests_settings[] = {
         {
-            "Settings::loadConfig valid config",
-            SettingsTests::load_valid_config
+            .name = "Settings::loadConfig valid config",
+            .function = SettingsTests::load_valid_config
         },
         {
-            "Settings::getIniManager loaded config",
-            SettingsTests::get_loaded_manager
+            .name = "Settings::getIniManager loaded config",
+            .function = SettingsTests::get_loaded_manager
         },
         {
-            "Settings::read value",
-            SettingsTests::read_value
+            .name = "Settings::read value",
+            .function = SettingsTests::read_value
         },
         {
-            "Settings::reject missing config",
-            SettingsTests::reject_missing_config
+            .name = "Settings::reject missing config",
+            .function = SettingsTests::reject_missing_config
         },
         {
-            "Settings::reject duplicate config",
-            SettingsTests::reject_duplicate_config
+            .name = "Settings::reject duplicate config",
+            .function = SettingsTests::reject_duplicate_config
         },
         {
-            "Settings::missing manager returns null",
-            SettingsTests::missing_manager_returns_null
+            .name = "Settings::missing manager returns null",
+            .function = SettingsTests::missing_manager_returns_null
         },
     };
 
     constexpr Test tests_hashing[] = {
         {
-            "Hashing::one byte returns correct hash",
-            HashingTests::one_byte_correct_hash
+            .name = "Hashing::one byte returns correct hash",
+            .function = HashingTests::one_byte_correct_hash
         },
         {
-            "Hashing::dummy file returns correct hash",
-            HashingTests::dummy_file_correct_hash
+            .name = "Hashing::dummy file returns correct hash",
+            .function = HashingTests::dummy_file_correct_hash
         }
     };
 
     constexpr Test tests_memory_scanner[] = {
         {
-            "MemoryScanner::attach current process",
-            MemoryScannerTests::attach_current_process
+            .name = "MemoryScanner::attach current process",
+            .function = MemoryScannerTests::attach_current_process
         },
         {
-            "MemoryScanner::attach current process twice",
-            MemoryScannerTests::attach_current_process_twice
+            .name = "MemoryScanner::attach current process twice",
+            .function = MemoryScannerTests::attach_current_process_twice
         },
         {
-            "MemoryScanner::read integer",
-            MemoryScannerTests::read_integer
+            .name = "MemoryScanner::read integer",
+            .function = MemoryScannerTests::read_integer
         },
         {
-            "MemoryScanner::read single byte",
-            MemoryScannerTests::read_single_byte
+            .name = "MemoryScanner::read single byte",
+            .function = MemoryScannerTests::read_single_byte
         },
         {
-            "MemoryScanner::read buffer",
-            MemoryScannerTests::read_buffer
+            .name = "MemoryScanner::read buffer",
+            .function = MemoryScannerTests::read_buffer
         },
         {
-            "MemoryScanner::read string",
-            MemoryScannerTests::read_string
+            .name = "MemoryScanner::read string",
+            .function = MemoryScannerTests::read_string
         },
         {
-            "MemoryScanner::read struct",
-            MemoryScannerTests::read_struct
+            .name = "MemoryScanner::read struct",
+            .function = MemoryScannerTests::read_struct
         },
         {
-            "MemoryScanner::read does not overwrite beyond size",
-            MemoryScannerTests::read_does_not_overwrite_beyond_size
+            .name = "MemoryScanner::read does not overwrite beyond size",
+            .function = MemoryScannerTests::read_does_not_overwrite_beyond_size
         },
         {
-            "MemoryScanner::read invalid address",
-            MemoryScannerTests::reject_invalid_address
+            .name = "MemoryScanner::read invalid address",
+            .function = MemoryScannerTests::reject_invalid_address
         },
         {
-            "MemoryScanner::read null buffer",
-            MemoryScannerTests::reject_null_buffer
+            .name = "MemoryScanner::read null buffer",
+            .function = MemoryScannerTests::reject_null_buffer
         },
         {
-            "MemoryScanner::read zero bytes",
-            MemoryScannerTests::read_zero_bytes
+            .name = "MemoryScanner::read zero bytes",
+            .function = MemoryScannerTests::read_zero_bytes
         }
     };
 

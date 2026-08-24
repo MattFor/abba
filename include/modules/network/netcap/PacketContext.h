@@ -5,9 +5,11 @@
 
 #ifndef ABBA_PACKETCONTEXT_H
 #define ABBA_PACKETCONTEXT_H
-#include <cstdint>
-#include <vector>
 
+#include <vector>
+#include <cstdint>
+
+/// Windows!
 namespace netcap
 {
     enum class PacketDirection : std::uint8_t

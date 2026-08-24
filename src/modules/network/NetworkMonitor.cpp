@@ -2,10 +2,10 @@
 // Created by Grzegorz on 8/19/2026.
 //
 
-#include <cstdint>
-#include <functional>
+#include <cstdint> // NOTE: unused on linux
 #include <memory>
 #include <string>
+#include <functional>
 
 #include "modules/network/netcap/IPacketValidator.h"
 #include "modules/network/netcap/PacketContext.h"
@@ -38,10 +38,7 @@ namespace
         GetModuleFileNameW(nullptr, buffer, MAX_PATH);
         return std::filesystem::path(buffer).parent_path() / L"abba_hook.dll"; // filename TBD, see below
     }
-}
-
-
-struct NetworkMonitor::Impl
+}struct NetworkMonitor::Impl
 {
     HANDLE pipe{
         INVALID_HANDLE_VALUE
@@ -120,18 +117,12 @@ struct NetworkMonitor::Impl
             }
         }
     }
-};
-
-NetworkMonitor::NetworkMonitor()
+};NetworkMonitor::NetworkMonitor()
     : impl_(std::make_unique<Impl>())
-{}
-
-NetworkMonitor::~NetworkMonitor()
+{}NetworkMonitor::~NetworkMonitor()
 {
     detach();
-};
-
-bool NetworkMonitor::attach(std::uint32_t process_id)
+};bool NetworkMonitor::attach(std::uint32_t process_id)
 {
     if (impl_->running)
     {
@@ -176,9 +167,7 @@ bool NetworkMonitor::attach(std::uint32_t process_id)
         impl_->serverLoop();
     });
     return true;
-}
-
-void NetworkMonitor::detach()
+}void NetworkMonitor::detach()
 {
     impl_->running = false;
     CancelIoEx(impl_->pipe, nullptr);
@@ -189,20 +178,14 @@ void NetworkMonitor::detach()
     }
     CloseHandle(impl_->pipe);
     impl_->pipe = INVALID_HANDLE_VALUE;
-}
-
-bool NetworkMonitor::isAttached() const
+}bool NetworkMonitor::isAttached() const
 {
     return impl_->running;
-}
-
-void NetworkMonitor::addValidator(std::shared_ptr<netcap::IPacketValidator> validator) const
+}void NetworkMonitor::addValidator(std::shared_ptr<netcap::IPacketValidator> validator) const
 {
     std::lock_guard lock(impl_->validatorsMutex);
     impl_->validators.push_back(std::move(validator));
-}
-
-void NetworkMonitor::setInvalidPacketCallback(InvalidPacketCallback callback)
+}void NetworkMonitor::setInvalidPacketCallback(InvalidPacketCallback callback)
 {
     impl_->callback = std::move(callback);
 }
@@ -210,18 +193,32 @@ void NetworkMonitor::setInvalidPacketCallback(InvalidPacketCallback callback)
 #else // !_WIN32
 
 struct NetworkMonitor::Impl
-{};NetworkMonitor::NetworkMonitor()
+{};
+
+NetworkMonitor::NetworkMonitor()
     : impl_(std::make_unique<Impl>())
-{}NetworkMonitor::~NetworkMonitor() = default;bool NetworkMonitor::attach(std::uint32_t)
+{}
+
+NetworkMonitor::~NetworkMonitor() = default;
+
+bool NetworkMonitor::attach(std::uint32_t)
 {
     p("NetworkMonitor: WinSock IAT hooking is Windows-only; not implemented on this platform.");
     return false;
-}void  NetworkMonitor::detach()
-{}bool NetworkMonitor::isAttached() const
+}
+
+void NetworkMonitor::detach()
+{}
+
+bool NetworkMonitor::isAttached() const
 {
     return false;
-}void  NetworkMonitor::addValidator(std::shared_ptr<netcap::IPacketValidator>)
-{}void NetworkMonitor::setInvalidPacketCallback(InvalidPacketCallback)
+}
+
+void NetworkMonitor::addValidator(std::shared_ptr<netcap::IPacketValidator>)
+{}
+
+void NetworkMonitor::setInvalidPacketCallback(InvalidPacketCallback)
 {}
 
 #endif

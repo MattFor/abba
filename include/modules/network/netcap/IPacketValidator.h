@@ -4,10 +4,12 @@
 
 #ifndef ABBA_IPACKETVALIDATOR_H
 #define ABBA_IPACKETVALIDATOR_H
+
 #include <string>
 
 #include "PacketContext.h"
 
+/// Windows!
 namespace netcap
 {
     struct ValidationResult
@@ -15,6 +17,7 @@ namespace netcap
         bool valid{
             true
         };
+
         std::string reason{
             "Packet was correct!"
         };

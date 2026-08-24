@@ -4,10 +4,11 @@
 
 #ifndef ABBA_INJECTOR_H
 #define ABBA_INJECTOR_H
-#include <cstdint>
+
+#include <cstdint>  // NOTE: unused on linux
 #include <filesystem>
 
-
+/// Windows!
 class Injector
 {
 public:

@@ -4,10 +4,12 @@
 
 #ifndef ABBA_PACKETVALIDATOR_H
 #define ABBA_PACKETVALIDATOR_H
+
 #include <optional>
 
 #include "IPacketValidator.h"
 
+/// Windows!
 class PacketValidator final : public netcap::IPacketValidator
 {
 public:
@@ -23,7 +25,7 @@ public:
         };
     };
 
-    explicit                               PacketValidator(Rules rules);
+    explicit                               PacketValidator(const Rules& rules);
     [[nodiscard]] netcap::ValidationResult validate(const netcap::PacketContext& packet) const override;
 
 private:

@@ -4,10 +4,10 @@
 
 #include "modules/network/netcap/PacketValidator.h"
 
-#include <algorithm>
 #include <format>
+#include <algorithm>
 
-PacketValidator::PacketValidator(Rules rules) : rules_(rules)
+PacketValidator::PacketValidator(const Rules& rules) : rules_(rules)
 {}
 
 netcap::ValidationResult PacketValidator::validate(const netcap::PacketContext& packet) const
@@ -16,15 +16,15 @@ netcap::ValidationResult PacketValidator::validate(const netcap::PacketContext& 
     if (rules_.min_length && data.size() < *rules_.min_length)
     {
         return {
-            false,
-            "Not enough data in packet"
+            .valid = false,
+            .reason = "Not enough data in packet"
         };
     }
     if (rules_.max_length && data.size() > *rules_.max_length)
     {
         return {
-            false,
-            "Too much data in packet"
+            .valid = false,
+            .reason = "Too much data in packet"
         };
     }
     if (!data.empty() && ( rules_.reject_all_zero || rules_.reject_all_same ))
@@ -38,21 +38,21 @@ netcap::ValidationResult PacketValidator::validate(const netcap::PacketContext& 
             if (rules_.reject_all_zero && front == 0)
             {
                 return {
-                    false,
-                    "All data in packet is just zeros"
+                    .valid = false,
+                    .reason = "All data in packet is just zeros"
                 };
             }
             if (rules_.reject_all_same)
             {
                 return {
-                    false,
-                    "All data in packet is the same value"
+                    .valid = false,
+                    .reason = "All data in packet is the same value"
                 };
             }
         }
     }
     return {
-        true,
-        "Packet is valid"
+        .valid = true,
+        .reason = "Packet is valid"
     };
 }

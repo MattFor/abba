@@ -46,7 +46,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void attach_current_process()
     {
         if (MemoryScanner scanner; !scanner.attach(currentProcessId()))
@@ -55,7 +55,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void attach_current_process_twice()
     {
         MemoryScanner scanner;
@@ -73,7 +73,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void read_integer()
     {
         const auto scanner = createAttachedScanner();
@@ -95,7 +95,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void read_single_byte()
     {
         const auto scanner = createAttachedScanner();
@@ -117,7 +117,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void read_buffer()
     {
         const auto scanner = createAttachedScanner();
@@ -148,7 +148,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void read_string()
     {
         const auto scanner = createAttachedScanner();
@@ -171,14 +171,17 @@ namespace MemoryScannerTests
     }
 
 
-    struct TestData
+    namespace
     {
-        std::uint32_t first;
-        std::uint64_t second;
-        std::uint16_t third;
-    };
+        struct TestData
+        {
+            std::uint32_t first;
+            std::uint64_t second;
+            std::uint16_t third;
+        };
+    }
 
-
+    //NOLINTNEXTLINE
     void read_struct()
     {
         const auto scanner = createAttachedScanner();
@@ -204,7 +207,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void read_does_not_overwrite_beyond_size()
     {
         const auto scanner = createAttachedScanner();
@@ -242,7 +245,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void reject_invalid_address()
     {
         const auto scanner = createAttachedScanner();
@@ -255,7 +258,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void reject_null_buffer()
     {
         const auto scanner = createAttachedScanner();
@@ -268,7 +271,7 @@ namespace MemoryScannerTests
         }
     }
 
-
+    //NOLINTNEXTLINE
     void read_zero_bytes()
     {
         const auto scanner = createAttachedScanner();

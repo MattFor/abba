@@ -10,14 +10,7 @@
 
 bool Injector::inject(std::uint32_t pid, const std::filesystem::path& dllPath) const
 {
-
-
-    HANDLE process = OpenProcess(
-        PROCESS_VM_OPERATION  |
-        PROCESS_VM_WRITE                    |
-        PROCESS_VM_READ                     |
-        PROCESS_QUERY_INFORMATION           |
-        PROCESS_CREATE_THREAD, FALSE, pid);
+    HANDLE process = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ | PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD, FALSE, pid);
 
     if (!process)
     {
@@ -27,9 +20,9 @@ bool Injector::inject(std::uint32_t pid, const std::filesystem::path& dllPath) c
 
     // VirtualAllocEx a buffer inside the process big enough to hold
     // dllPath as a wide string, including the null terminator.
-    const std::wstring& wpath = dllPath.native();
-    std::size_t  memorySize = (wpath.size() + 1) * sizeof(wchar_t);
-    void* remoteMem  = VirtualAllocEx(process, nullptr, memorySize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    const std::wstring& wpath      = dllPath.native();
+    std::size_t         memorySize = ( wpath.size() + 1 ) * sizeof(wchar_t);
+    void*               remoteMem  = VirtualAllocEx(process, nullptr, memorySize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
     if (!remoteMem)
     {
@@ -40,7 +33,7 @@ bool Injector::inject(std::uint32_t pid, const std::filesystem::path& dllPath) c
     }
 
     // WriteProcessMemory the dllPath bytes into remoteMem.
-    size_t bytesWritten = 0;
+    size_t  bytesWritten    = 0;
     WINBOOL writingSucceded = WriteProcessMemory(process, remoteMem, wpath.data(), memorySize, &bytesWritten);
     if (!writingSucceded || bytesWritten != memorySize)
     {
@@ -51,7 +44,7 @@ bool Injector::inject(std::uint32_t pid, const std::filesystem::path& dllPath) c
     }
 
     const HMODULE handleKernel32 = GetModuleHandleW(L"kernel32.dll");
-    auto loadLibraryW = reinterpret_cast<LPTHREAD_START_ROUTINE>(GetProcAddress(handleKernel32, "LoadLibraryW"));
+    auto          loadLibraryW   = reinterpret_cast<LPTHREAD_START_ROUTINE>(GetProcAddress(handleKernel32, "LoadLibraryW"));
 
 
     // This starts a thread INSIDE the target that calls LoadLibraryW(remoteMem).

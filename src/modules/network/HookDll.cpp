@@ -42,6 +42,7 @@ namespace
             .timestamp_ns = GetTickCount64(),
             .length = payloadBytesToWrite
         };
+
         std::lock_guard lock(pipeMutex);
 
         DWORD   headerWrittenBytes    = 0;
@@ -52,12 +53,15 @@ namespace
             std::print("Something went wrong when writing the network frame header");
             return false;
         }
+
         if (payloadBytesToWrite == 0)
         {
             return true;
         }
+
         DWORD   payloadWrittenBytes    = 0;
         WINBOOL succededWritingPayload = WriteFile(pipeHandle, capturedBytes, payloadBytesToWrite, &payloadWrittenBytes, nullptr);
+
         if (!succededWritingPayload || payloadBytesToWrite != payloadWrittenBytes)
         {
             std::print("Something went wrong when writing the network frame payload");
@@ -68,6 +72,7 @@ namespace
 
     using SendFn      = int(WSAAPI*)(SOCKET, const char*, int, int);
     using RecvFn      = int(WSAAPI*)(SOCKET, char*, int, int);
+
     SendFn g_realSend = nullptr;
     RecvFn g_realRecv = nullptr;
 
@@ -80,6 +85,7 @@ namespace
             WINBOOL sendingSucceded = sendFrame(netcap::PacketDirection::Send, reinterpret_cast<const std::uint8_t*>(buf), static_cast<std::size_t>(result));
             std::print("[DBG] sendFrame ok={}", sendingSucceded);
         }
+
         return result;
     }
 
@@ -93,6 +99,7 @@ namespace
             WINBOOL receivingSucceded = sendFrame(netcap::PacketDirection::Recv, reinterpret_cast<const std::uint8_t*>(buf), static_cast<std::size_t>(result));
             std::print("[DBG] recvFrame ok={}", receivingSucceded);
         }
+
         return result;
     }
 
@@ -128,31 +135,38 @@ namespace
         {
             const char* dllName = reinterpret_cast<const char*>(addressBase + importDescriptor->Name);
             std::printf("%s:\n", dllName);
+
             if (stricmp(dllName, importDll) != 0)
             {
                 continue;
             }
+
             auto firstThunk = reinterpret_cast<PIMAGE_THUNK_DATA>(addressBase + importDescriptor->FirstThunk);
             auto thunk      = reinterpret_cast<PIMAGE_THUNK_DATA>(addressBase + ( importDescriptor->OriginalFirstThunk ? importDescriptor->OriginalFirstThunk : importDescriptor->FirstThunk ));
+
             for (auto thunkIterator = thunk; thunkIterator->u1.AddressOfData != 0; thunkIterator++, firstThunk++)
             {
                 if (IMAGE_SNAP_BY_ORDINAL(thunkIterator->u1.Ordinal))
                 {
                     continue;
                 }
+
                 const auto addressCurrentFunction = reinterpret_cast<PIMAGE_IMPORT_BY_NAME>(addressBase + thunkIterator->u1.AddressOfData);
 
                 if (strcmp(addressCurrentFunction->Name, importFunc) != 0)
                 {
                     continue;
                 }
+
                 auto* slot          = &firstThunk->u1.Function;
                 DWORD oldProtection = 0;
+
                 if (!VirtualProtect(slot, sizeof( *slot ), PAGE_READWRITE, &oldProtection))
                 {
                     std::print("Something went wrong when trying to change right protection of the dll.\n");
                     return false;
                 }
+
                 *originalOut = reinterpret_cast<void*>(*slot);
                 *slot        = reinterpret_cast<std::uintptr_t>(hookFn);
 
@@ -160,9 +174,11 @@ namespace
                 {
                     std::print("Something went wrong when trying to change BACK right protection of the dll. Possibly not critical although unsafe\n");
                 }
+
                 return true;
             }
         }
+
         return false;
     }
 
@@ -213,6 +229,7 @@ namespace
             SetEvent(readyEvent);
             CloseHandle(readyEvent);
         }
+
         return 0;
     }
 }
@@ -226,5 +243,6 @@ BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID)
         CreateThread(nullptr, 0, HookMain, nullptr, 0, nullptr);
         return TRUE;
     }
+
     return FALSE;
 }

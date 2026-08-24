@@ -50,8 +50,8 @@ bool Settings::loadConfig(const std::filesystem::path& configPath)
     }
 
     loaders.emplace_back(Loader{
-        absolutePath,
-        std::make_unique<inicpp::IniManager>(configPath.string())
+        .path = absolutePath,
+        .manager = std::make_unique<inicpp::IniManager>(configPath.string())
     });
 
     p("[SUCCESS] .ini config {} loaded!", absolutePath.string());

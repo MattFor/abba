@@ -9,10 +9,10 @@
 #include <ws2tcpip.h>
 #include <windows.h>
 
-#include <iostream>
 #include <print>
 #include <string>
 #include <thread>
+#include <iostream>
 
 namespace
 {
@@ -30,12 +30,15 @@ namespace
         while (true)
         {
             int n = recv(client, buf, sizeof( buf ), 0);
+
             if (n <= 0)
             {
                 break;
             }
+
             send(client, buf, n, 0);
         }
+
         closesocket(client);
     }
 }
@@ -68,6 +71,7 @@ int main()
         std::print("bind() failed\n");
         return EXIT_FAILURE;
     }
+
     if (listen(listenSock, 1) == SOCKET_ERROR)
     {
         std::print("listen() failed\n");
@@ -122,6 +126,7 @@ int main()
     closesocket(clientSock);
     closesocket(listenSock);
     WSACleanup();
+
     return EXIT_SUCCESS;
 }
 #endif

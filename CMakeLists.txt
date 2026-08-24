@@ -63,7 +63,7 @@ target_compile_definitions(abba PRIVATE
         $<$<CONFIG:Debug>:LOG=1>
         $<$<NOT:$<CONFIG:Debug>>:LOG=0>
 )
-if(WIN32)
+if (WIN32)
     add_library(abba_hook SHARED
             src/modules/network/HookDll.cpp
     )
@@ -80,7 +80,7 @@ if(WIN32)
             $<$<NOT:$<CONFIG:Debug>>:LOG=0>
     )
 endif ()
-if(WIN32)
+if (WIN32)
     add_executable(abba_socket_target
             src/utilities/SocketTarget.cpp
     )
@@ -90,7 +90,7 @@ if(WIN32)
             stdc++exp
     )
 
-endif()
+endif ()
 
 # Tests
 enable_testing()
@@ -124,7 +124,7 @@ set_tests_properties(abba_tests PROPERTIES
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
-if(WIN32)
+if (WIN32)
     add_executable(abba_network_tests
             tests/main_network.cpp        # or wherever you put the self-attach test
     )
@@ -145,4 +145,4 @@ if(WIN32)
     )
 
     add_test(NAME abba_network_tests COMMAND abba_network_tests)
-endif()
+endif ()
