@@ -2,7 +2,11 @@
 // Created by Grzegorz on 8/23/2026.
 //
 
-#if defined(_WIN32)
+
+
+#ifndef _WIN32
+#error "SocketTarget.cpp is Windows-only"
+#endif
 
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
@@ -129,4 +133,3 @@ int main()
 
     return EXIT_SUCCESS;
 }
-#endif

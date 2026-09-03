@@ -12,7 +12,7 @@
 class Injector
 {
 public:
-    [[nodiscard]] bool inject(std::uint32_t pid, const std::filesystem::path& dllPath) const;
+    [[nodiscard]] static bool inject(std::uint32_t pid, const std::filesystem::path& dllPath);
 };
 
 #endif //ABBA_INJECTOR_H

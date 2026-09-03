@@ -2,6 +2,9 @@
 // Created by Grzegorz on 8/23/2026.
 //
 
+
+// It's cross platform!
+
 #ifndef ABBA_PACKETVALIDATOR_H
 #define ABBA_PACKETVALIDATOR_H
 
@@ -9,7 +12,6 @@
 
 #include "IPacketValidator.h"
 
-/// Windows!
 class PacketValidator final : public netcap::IPacketValidator
 {
 public:

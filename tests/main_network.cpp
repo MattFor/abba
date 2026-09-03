@@ -1,6 +1,10 @@
 //
 // Created by Grzegorz on 8/23/2026.
 //
+#include <iostream>
+#ifndef _WIN32
+#error "Injector.cpp is Windows-only"
+#endif
 
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
@@ -112,12 +116,12 @@ namespace
         DWORD      written = 0;
         WriteFile(stdInWrite, &newline, 1, &written, nullptr);
     }
-
     void quitTarget(HANDLE stdInWrite)
     {
-        const std::string quit    = "quit\n";
-        DWORD             written = 0;
-        WriteFile(stdInWrite, quit.data(), static_cast<DWORD>(quit.size()), &written, nullptr);
+        const std::string preambule    = "quit\n";
+        DWORD             preambuleWritten = 0;
+        WriteFile(stdInWrite, preambule.data(), static_cast<DWORD>(preambule.size()), &preambuleWritten, nullptr);
+
     }
 
     struct StdoutDrain
@@ -244,12 +248,30 @@ int main()
     {
         return violations.size() >= expectedCount;
     });
+    lock.unlock();
+    // Two threads are writting to the stdout here so that's why it bugs out, i am too lazy to fix it for now
+    p("Scripted message done. Now you can type your own, 'quit' to stop.");
 
-    quitTarget(target.stdInWrite);
+    std::string line;
+    while (std::getline(std::cin, line))
+    {
+        std::string toSend = line + "\n";
+        DWORD written = 0;
+
+        WriteFile(target.stdInWrite, toSend.data(), toSend.size(), &written, nullptr);
+
+        if (line == "quit")
+        {
+            break;
+        }
+    }
+
     WaitForSingleObject(target.processInfo.hProcess, 2000);
-
+    p("[DBG] before detach");
     networkMonitor.detach();
+    p("[DBG] after detach");
     drain.join();
+    p("[DBG] after drain join");
 
     CloseHandle(target.stdInWrite);
     CloseHandle(target.stdOutRead);

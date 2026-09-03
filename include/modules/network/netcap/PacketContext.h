@@ -1,7 +1,9 @@
 //
 // Created by Grzegorz on 8/23/2026.
 //
-#pragma once
+
+
+// It's cross platform!
 
 #ifndef ABBA_PACKETCONTEXT_H
 #define ABBA_PACKETCONTEXT_H
@@ -9,7 +11,6 @@
 #include <vector>
 #include <cstdint>
 
-/// Windows!
 namespace netcap
 {
     enum class PacketDirection : std::uint8_t
@@ -26,7 +27,7 @@ namespace netcap
     {
         std::uint32_t   processId{};
         PacketDirection direction{};
-        std::uint64_t   timestamp_ns{};
+        std::uint64_t   timestamp_ms{};
 
         /**
          * Raw bytes exactly as passed to / returned from the socket call, (send/recv) TODO: (/WSASend/WSARecv)

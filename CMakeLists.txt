@@ -64,6 +64,10 @@ target_compile_definitions(abba PRIVATE
         $<$<NOT:$<CONFIG:Debug>>:LOG=0>
 )
 if (WIN32)
+    # ugly, but for now live with it, because i am lazy and
+    # this allows me to just run abba_network_tests and not worry about anything else
+    get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
+
     add_library(abba_hook SHARED
             src/modules/network/HookDll.cpp
     )
@@ -136,11 +140,17 @@ if (WIN32)
             $<$<NOT:$<CONFIG:Debug>>:LOG=0>
     )
 
-    add_dependencies(abba_network_tests abba_hook)
+    add_dependencies(abba_network_tests abba_hook abba_socket_target)
 
     add_custom_command(TARGET abba_network_tests POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:abba_hook>
+            $<TARGET_FILE_DIR:abba_network_tests>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:abba_socket_target>
+            $<TARGET_FILE_DIR:abba_network_tests>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${MINGW_BIN_DIR}/libwinpthread-1.dll
             $<TARGET_FILE_DIR:abba_network_tests>
     )
 

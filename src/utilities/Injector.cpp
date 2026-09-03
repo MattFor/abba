@@ -1,14 +1,21 @@
 //
 // Created by Grzegorz on 8/19/2026.
 //
-#if defined(_WIN32)
-
+#ifndef _WIN32
+#error "Injector.cpp is Windows-only"
+#endif
 
 #include "utilities/Injector.h"
-#include <windows.h>
+#include <cstddef>
+#include <cstdint>
 #include <cstdio>
+#include <filesystem>
+#include <string>
+#include <windows.h>
 
-bool Injector::inject(std::uint32_t pid, const std::filesystem::path& dllPath) const
+
+
+bool Injector::inject(std::uint32_t pid, const std::filesystem::path& dllPath)
 {
     HANDLE process = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ | PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD, FALSE, pid);
 
@@ -69,4 +76,3 @@ bool Injector::inject(std::uint32_t pid, const std::filesystem::path& dllPath) c
     CloseHandle(process);
     return exitCode != 0;
 }
-#endif

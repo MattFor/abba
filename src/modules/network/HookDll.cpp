@@ -2,8 +2,10 @@
 // Created by Grzegorz on 8/23/2026.
 //
 
+#ifndef _WIN32
+#error "This file is Windows-only"
+#endif
 
-#include <mutex>
 #include <print>
 #include <winsock2.h>
 #include <windows.h>
@@ -11,12 +13,31 @@
 
 #include "modules/network/netcap/hook/HookProtocol.h"
 #include "modules/network/netcap/PacketContext.h"
+#include "utilities/Logger.h"
 
 
 namespace
 {
-    HANDLE     pipeHandle = INVALID_HANDLE_VALUE;
-    std::mutex pipeMutex;
+    HANDLE  pipeHandle = INVALID_HANDLE_VALUE;
+    SRWLOCK pipeLock    = SRWLOCK_INIT;
+
+    struct SrwExclusiveGuard
+    {
+        SRWLOCK& lock;
+
+        explicit SrwExclusiveGuard(SRWLOCK& l) : lock(l)
+        {
+            AcquireSRWLockExclusive(&lock);
+        }
+
+        ~SrwExclusiveGuard()
+        {
+            ReleaseSRWLockExclusive(&lock);
+        }
+
+        SrwExclusiveGuard(const SrwExclusiveGuard&)            = delete;
+        SrwExclusiveGuard& operator=(const SrwExclusiveGuard&) = delete;
+    };
 
 
     [[nodiscard]] bool connectPipe()
@@ -39,18 +60,18 @@ namespace
         netcap::hookproto::FrameHeader header = {
             .process_id = static_cast<std::uint32_t>(GetCurrentProcessId()),
             .direction = static_cast<std::uint8_t>(direction),
-            .timestamp_ns = GetTickCount64(),
+            .timestamp_ms = GetTickCount64(),
             .length = payloadBytesToWrite
         };
 
-        std::lock_guard lock(pipeMutex);
+        SrwExclusiveGuard lock(pipeLock);
 
         DWORD   headerWrittenBytes    = 0;
         DWORD   headerBytesToWrite    = sizeof( header );
         WINBOOL succededWritingHeader = WriteFile(pipeHandle, &header, sizeof( header ), &headerWrittenBytes, nullptr);
         if (!succededWritingHeader || headerBytesToWrite != headerWrittenBytes)
         {
-            std::print("Something went wrong when writing the network frame header");
+            p("Something went wrong when writing the network frame header");
             return false;
         }
 
@@ -64,7 +85,7 @@ namespace
 
         if (!succededWritingPayload || payloadBytesToWrite != payloadWrittenBytes)
         {
-            std::print("Something went wrong when writing the network frame payload");
+            p("Something went wrong when writing the network frame payload");
             return false;
         }
         return true;
@@ -79,11 +100,11 @@ namespace
     int HookedSend(SOCKET s, const char* buf, int len, int flags)
     {
         auto result = g_realSend(s, buf, len, flags);
-        std::print("[DBG] HookedSend result={}\n", result);
+        p("[DBG] HookedSend result={}\n", result);
         if (result > 0)
         {
             WINBOOL sendingSucceded = sendFrame(netcap::PacketDirection::Send, reinterpret_cast<const std::uint8_t*>(buf), static_cast<std::size_t>(result));
-            std::print("[DBG] sendFrame ok={}", sendingSucceded);
+            p("[DBG] sendFrame ok={}", sendingSucceded);
         }
 
         return result;
@@ -92,12 +113,12 @@ namespace
     int HookedRecv(SOCKET s, char* buf, int len, int flags)
     {
         auto result = g_realRecv(s, buf, len, flags);
-        std::print("[DBG] HookedRecv result={}\n", result);
+        p("[DBG] HookedRecv result={}\n", result);
 
         if (result > 0)
         {
             WINBOOL receivingSucceded = sendFrame(netcap::PacketDirection::Recv, reinterpret_cast<const std::uint8_t*>(buf), static_cast<std::size_t>(result));
-            std::print("[DBG] recvFrame ok={}", receivingSucceded);
+            p("[DBG] recvFrame ok={}", receivingSucceded);
         }
 
         return result;
@@ -110,14 +131,14 @@ namespace
         const auto dos = reinterpret_cast<PIMAGE_DOS_HEADER>(addressBase);
         if (dos->e_magic != IMAGE_DOS_SIGNATURE)
         {
-            std::print("DOS signature mismatch. Not a valid PE image.\n");
+            p("DOS signature mismatch. Not a valid PE image.\n");
             return false;
         }
 
         const auto nt = reinterpret_cast<PIMAGE_NT_HEADERS>(addressBase + dos->e_lfanew);
         if (nt->Signature != IMAGE_NT_SIGNATURE)
         {
-            std::print("NT signature mismatch. Not a valid PE image.\n");
+            p("NT signature mismatch. Not a valid PE image.\n");
             return false;
         }
 
@@ -125,7 +146,7 @@ namespace
 
         if (addressImportDescriptorsDirectory == 0)
         {
-            std::print("Address descriptors directory imports nothing. Exiting...\n");
+            p("Address descriptors directory imports nothing. Exiting...\n");
             return false;
         }
 
@@ -134,7 +155,8 @@ namespace
         for (auto importDescriptor = descriptorArray; importDescriptor->Name != 0; importDescriptor++)
         {
             const char* dllName = reinterpret_cast<const char*>(addressBase + importDescriptor->Name);
-            std::printf("%s:\n", dllName);
+            // Debuggingmay
+            // p("{}:\n", dllName);
 
             if (stricmp(dllName, importDll) != 0)
             {
@@ -163,7 +185,7 @@ namespace
 
                 if (!VirtualProtect(slot, sizeof( *slot ), PAGE_READWRITE, &oldProtection))
                 {
-                    std::print("Something went wrong when trying to change right protection of the dll.\n");
+                    p("Something went wrong when trying to change right protection of the dll.\n");
                     return false;
                 }
 
@@ -172,7 +194,7 @@ namespace
 
                 if (!VirtualProtect(slot, sizeof( *slot ), oldProtection, &oldProtection))
                 {
-                    std::print("Something went wrong when trying to change BACK right protection of the dll. Possibly not critical although unsafe\n");
+                    p("Something went wrong when trying to change BACK right protection of the dll. Possibly not critical although unsafe\n");
                 }
 
                 return true;
@@ -184,18 +206,23 @@ namespace
 
     void installHooks()
     {
+
         HMODULE socketsModule = GetModuleHandleW(L"ws2_32.dll");
         auto    processSendFn = reinterpret_cast<SendFn>(GetProcAddress(socketsModule, "send"));
         g_realSend            = processSendFn;
 
         auto processRecvFn = reinterpret_cast<RecvFn>(GetProcAddress(socketsModule, "recv"));
         g_realRecv         = processRecvFn;
-
+        if (!g_realRecv || !g_realSend)
+        {
+            p("Failed to resolve ws2_32 send/recv, aborting hook install\n");
+            return;
+        }
         HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetCurrentProcessId());
 
         if (snapshot == INVALID_HANDLE_VALUE)
         {
-            std::print("Something went wrong when trying to install helper functions.\n");
+            p("Something went wrong when trying to install helper functions.\n");
             return;
         }
 

@@ -2,6 +2,8 @@
 // Created by Grzegorz on 8/23/2026.
 //
 
+// It's cross platform!
+
 #ifndef ABBA_IPACKETVALIDATOR_H
 #define ABBA_IPACKETVALIDATOR_H
 

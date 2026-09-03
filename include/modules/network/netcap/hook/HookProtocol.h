@@ -2,12 +2,14 @@
 // Created by Grzegorz on 8/23/2026.
 //
 
+// It's cross platform!
+
+
 #ifndef ABBA_HOOKPROTOCOL_H
 #define ABBA_HOOKPROTOCOL_H
-
 #include <cstdint>
 
-/// Windows!
+
 namespace netcap::hookproto
 {
     inline constexpr std::uint32_t kMagic           = 0x50414E43; /// Arbitrary ID
@@ -30,7 +32,7 @@ namespace netcap::hookproto
         };
         std::uint32_t process_id{};
         std::uint8_t  direction{};
-        std::uint64_t timestamp_ns{};
+        std::uint64_t timestamp_ms{};
         std::uint32_t length{};
     };
 #pragma pack(pop)
