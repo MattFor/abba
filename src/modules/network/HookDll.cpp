@@ -19,7 +19,7 @@
 namespace
 {
     HANDLE  pipeHandle = INVALID_HANDLE_VALUE;
-    SRWLOCK pipeLock    = SRWLOCK_INIT;
+    SRWLOCK pipeLock   = SRWLOCK_INIT;
 
     struct SrwExclusiveGuard
     {
@@ -91,8 +91,8 @@ namespace
         return true;
     }
 
-    using SendFn      = int(WSAAPI*)(SOCKET, const char*, int, int);
-    using RecvFn      = int(WSAAPI*)(SOCKET, char*, int, int);
+    using SendFn = int(WSAAPI*)(SOCKET, const char*, int, int);
+    using RecvFn = int(WSAAPI*)(SOCKET, char*, int, int);
 
     SendFn g_realSend = nullptr;
     RecvFn g_realRecv = nullptr;
@@ -206,7 +206,6 @@ namespace
 
     void installHooks()
     {
-
         HMODULE socketsModule = GetModuleHandleW(L"ws2_32.dll");
         auto    processSendFn = reinterpret_cast<SendFn>(GetProcAddress(socketsModule, "send"));
         g_realSend            = processSendFn;

@@ -3,7 +3,6 @@
 //
 
 
-
 #ifndef _WIN32
 #error "SocketTarget.cpp is Windows-only"
 #endif

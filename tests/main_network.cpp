@@ -116,12 +116,12 @@ namespace
         DWORD      written = 0;
         WriteFile(stdInWrite, &newline, 1, &written, nullptr);
     }
+
     void quitTarget(HANDLE stdInWrite)
     {
-        const std::string preambule    = "quit\n";
+        const std::string preambule        = "quit\n";
         DWORD             preambuleWritten = 0;
         WriteFile(stdInWrite, preambule.data(), static_cast<DWORD>(preambule.size()), &preambuleWritten, nullptr);
-
     }
 
     struct StdoutDrain
@@ -255,8 +255,8 @@ int main()
     std::string line;
     while (std::getline(std::cin, line))
     {
-        std::string toSend = line + "\n";
-        DWORD written = 0;
+        std::string toSend  = line + "\n";
+        DWORD       written = 0;
 
         WriteFile(target.stdInWrite, toSend.data(), toSend.size(), &written, nullptr);
 

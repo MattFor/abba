@@ -41,13 +41,15 @@ namespace
         {
             return false;
         }
-        HANDLE waitHandles[2] = {event, stopEvent};
+        HANDLE waitHandles[2] = {
+            event,
+            stopEvent
+        };
         const DWORD waitResult = WaitForMultipleObjects(2, waitHandles, FALSE, INFINITE);
         // Blocks here until data arrives OR CancelIoEx aborts it (ERROR_OPERATION_ABORTED) - this is the reliable cancel point.
         if (waitResult == WAIT_OBJECT_0)
         {
             return GetOverlappedResult(pipe, &ov, &read, FALSE);
-
         }
 
         // stopevent fired (or wait failed) - cancel pedning operation, from our own thread
@@ -109,9 +111,7 @@ struct NetworkMonitor::Impl
             {
                 DWORD unused = 0;
                 connected    = GetOverlappedResult(pipe, &connectOv, &unused, TRUE);
-
             }
-
         }
         if (!connected)
         {

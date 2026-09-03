@@ -14,7 +14,6 @@
 #include <windows.h>
 
 
-
 bool Injector::inject(std::uint32_t pid, const std::filesystem::path& dllPath)
 {
     HANDLE process = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ | PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD, FALSE, pid);
