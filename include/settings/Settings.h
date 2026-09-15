@@ -10,24 +10,24 @@
 
 #include <inicpp/inicpp.hpp>
 
-//NOLINTNEXTLINE - Definitely gonna use this later for sure, for sure
+// NOLINTNEXTLINE - Definitely gonna use this later for sure, for sure
 #include "../utilities/Logger.h"
 
 // Get the platform early
 enum class Platform
 {
-    Linux,
-    Windows
+	Linux,
+	Windows
 };
 
 constexpr Platform getPlatform()
 {
-#if defined(_WIN32)
-    return Platform::Windows;
-#elif defined(__linux__)
-    return Platform::Linux;
+#if defined( _WIN32 )
+	return Platform::Windows;
+#elif defined( __linux__ )
+	return Platform::Linux;
 #else
-#error "Unsupported platform"
+	#error "Unsupported platform"
 #endif
 }
 
@@ -35,45 +35,44 @@ inline static constexpr Platform platform = getPlatform();
 
 class Settings
 {
-    Settings() = default;
+	Settings() = default;
 
-    /**
-     * Ini file loader holder.
-     *
-     * @see https://github.com/dujingning/inicpp
-     */
-    struct Loader
-    {
-        std::filesystem::path               path;
-        std::unique_ptr<inicpp::IniManager> manager;
-    };
+	/**
+	 * Ini file loader holder.
+	 *
+	 * @see https://github.com/dujingning/inicpp
+	 */
+	struct Loader
+	{
+		std::filesystem::path               path;
+		std::unique_ptr<inicpp::IniManager> manager;
+	};
 
-    std::vector<Loader> loaders{};
+	std::vector<Loader> loaders{};
 
-public:
-    // Make it a singleton
-    static Settings& instance()
-    {
-        static Settings settings;
-        return settings;
-    }
+  public:
+	// Make it a singleton
+	static Settings& instance()
+	{
+		static Settings settings;
+		return settings;
+	}
 
-    /**
-     * Load an .ini file config into memory.
-     *
-     * @param configPath Path to the .ini config file.
-     *
-     * @returns TODO
-     */
-    bool loadConfig(const std::filesystem::path& configPath);
+	/**
+	 * Load an .ini file config into memory.
+	 *
+	 * @param configPath Path to the .ini config file.
+	 *
+	 * @returns TODO
+	 */
+	bool loadConfig( const std::filesystem::path& configPath );
 
-    /**
-     * TODO
-     * @param configPath
-     * @return
-     */
-    inicpp::IniManager* getIniManager(const std::filesystem::path& configPath);
+	/**
+	 * TODO
+	 * @param configPath
+	 * @return
+	 */
+	inicpp::IniManager* getIniManager( const std::filesystem::path& configPath );
 };
 
-
-#endif //ABBA_SETTINGS_H
+#endif // ABBA_SETTINGS_H

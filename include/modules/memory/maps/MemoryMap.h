@@ -173,7 +173,7 @@ struct RegionFilter
 
 class MemoryMap
 {
-public:
+  public:
 	virtual ~MemoryMap()                         = default;
 	MemoryMap( const MemoryMap& )                = delete;
 	MemoryMap& operator=( const MemoryMap& )     = delete;
@@ -197,12 +197,12 @@ public:
 	[[nodiscard]] std::vector<memmap::Region> select( const memmap::RegionFilter& filter ) const;
 	[[nodiscard]] bool                        covers( std::uintptr_t address, std::size_t size, memmap::Protection required ) const noexcept;
 
-protected:
+  protected:
 	MemoryMap() = default;
 
 	[[nodiscard]] virtual bool collect( std::uint32_t process_id, std::vector<memmap::Region>& regions ) const = 0;
 
-private:
+  private:
 	std::uint32_t pid{};
 
 	std::vector<memmap::Region> mapped{};

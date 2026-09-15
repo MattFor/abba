@@ -9,7 +9,7 @@
 #include <chrono>
 
 #ifndef LOG
-#define LOG 0
+	#define LOG 0
 #endif
 
 /**
@@ -20,12 +20,12 @@
  * @param args Arguments for formatted text.
  */
 template <typename... Args>
-void p(std::format_string<Args...> text, Args&&... args)
+void p( std::format_string<Args...> text, Args&&... args )
 {
-    if constexpr (LOG)
-    {
-        std::print("[{:%Y-%m-%d %H:%M:%S}] {}\n", std::chrono::system_clock::now(), std::format(text, std::forward<Args>(args)...));
-    }
+	if constexpr ( LOG )
+	{
+		std::print( "[{:%Y-%m-%d %H:%M:%S}] {}\n", std::chrono::system_clock::now(), std::format( text, std::forward<Args>( args )... ) );
+	}
 }
 
-#endif //ABBA_LOGS_H
+#endif // ABBA_LOGS_H

@@ -15,20 +15,19 @@
 
 class Hashing
 {
-public:
-    /*
-     * Create a hash from data in bytes
-     *
-     * Example: hashFromData({std::byte{0x01}})
-     */
-    [[nodiscard]] static std::string hashFromData(const std::vector<std::byte>& data);
+  public:
+	/*
+	 * Create a hash from data in bytes
+	 *
+	 * Example: hashFromData({std::byte{0x01}})
+	 */
+	[[nodiscard]] static std::string hashFromData( const std::vector<std::byte>& data );
 
-    /*
-     * Create a hash by reading data from path from object
-     */
-    [[nodiscard]] static std::optional<std::string> hashFromFile(const std::filesystem::path& path);
-    [[nodiscard]] static std::optional<std::string> hashFromFile(const FileOperations::FileInfo& file);
+	/*
+	 * Create a hash by reading data from path from object
+	 */
+	[[nodiscard]] static std::optional<std::string> hashFromFile( const std::filesystem::path& path );
+	[[nodiscard]] static std::optional<std::string> hashFromFile( const FileOperations::FileInfo& file );
 };
 
-
-#endif //ABBA_HASHING_H
+#endif // ABBA_HASHING_H

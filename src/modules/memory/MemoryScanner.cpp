@@ -439,7 +439,7 @@ std::size_t MemoryScanner::readPartial( const std::uintptr_t address, void* buff
 	SIZE_T transferred = 0;
 
 	// To chyba ma tak być ale szczerze nwm copied from the internet
-    // Gekimaru: Jest git
+	// Gekimaru: Jest git
 	ReadProcessMemory( static_cast<HANDLE>( this->handle ), reinterpret_cast<LPCVOID>( address ), buffer, size, &transferred );
 
 	return static_cast<std::size_t>( transferred );

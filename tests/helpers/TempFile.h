@@ -11,29 +11,29 @@
 
 class TempFile
 {
-    std::filesystem::path path_;
+	std::filesystem::path path_;
 
-public:
-    explicit TempFile(const std::vector<unsigned char>& bytes)
-        : path_(std::filesystem::temp_directory_path() / "abba_test.bin")
-    {
-        std::ofstream out(path_, std::ios::binary);
-        out.write(reinterpret_cast<const char*>(bytes.data()), static_cast<std::streamsize>(bytes.size()));
-    }
+  public:
+	explicit TempFile( const std::vector<unsigned char>& bytes )
+	    : path_( std::filesystem::temp_directory_path() / "abba_test.bin" )
+	{
+		std::ofstream out( path_, std::ios::binary );
+		out.write( reinterpret_cast<const char*>( bytes.data() ), static_cast<std::streamsize>( bytes.size() ) );
+	}
 
-    ~TempFile()
-    {
-        std::error_code ec;
-        std::filesystem::remove(path_, ec);
-    }
+	~TempFile()
+	{
+		std::error_code ec;
+		std::filesystem::remove( path_, ec );
+	}
 
-    [[nodiscard]] const std::filesystem::path& path() const
-    {
-        return path_;
-    }
+	[[nodiscard]] const std::filesystem::path& path() const
+	{
+		return path_;
+	}
 
-    TempFile(const TempFile&)            = delete;
-    TempFile& operator=(const TempFile&) = delete;
+	TempFile( const TempFile& )            = delete;
+	TempFile& operator=( const TempFile& ) = delete;
 };
 
-#endif //ABBA_TEMPFILE_H
+#endif // ABBA_TEMPFILE_H

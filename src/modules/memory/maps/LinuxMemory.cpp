@@ -161,7 +161,7 @@ std::optional<memmap::Region> LinuxMemory::parseLine( const std::string_view lin
 		.protection = protection,
 		.type       = classify( path, shared ),
 		.path       = std::string{
-		        path }
+                path }
 	};
 }
 

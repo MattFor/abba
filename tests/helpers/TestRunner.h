@@ -12,44 +12,44 @@
 
 struct Test
 {
-    std::string_view name;
-    void (*          function)();
+	std::string_view name;
+	void ( *function )();
 };
 
-inline bool runTests(std::span<const Test> tests, std::size_t& passed, std::size_t& failed, std::size_t& total, std::size_t& current)
+inline bool runTests( std::span<const Test> tests, std::size_t& passed, std::size_t& failed, std::size_t& total, std::size_t& current )
 {
-    total += tests.size();
+	total += tests.size();
 
-    int i = 0;
-    for (const auto& [name, function] : tests)
-    {
-        p("{}|{}. Testing {}", ++current, ++i, name);
+	int i = 0;
+	for ( const auto& [name, function] : tests )
+	{
+		p( "{}|{}. Testing {}", ++current, ++i, name );
 
-        try
-        {
-            function();
+		try
+		{
+			function();
 
-            p("[PASS] {}\n\n", name);
-            ++passed;
-        }
-        catch (const std::exception& e)
-        {
-            p("[FAIL] {}\n\n", e.what());
+			p( "[PASS] {}\n\n", name );
+			++passed;
+		}
+		catch ( const std::exception& e )
+		{
+			p( "[FAIL] {}\n\n", e.what() );
 
-            ++failed;
+			++failed;
 
-            return true;
-        }
-        catch (...)
-        {
-            p("[FAIL] Unknown exception\n\n");
+			return true;
+		}
+		catch ( ... )
+		{
+			p( "[FAIL] Unknown exception\n\n" );
 
-            ++failed;
+			++failed;
 
-            return true;
-        }
-    }
-    return false;
+			return true;
+		}
+	}
+	return false;
 }
 
-#endif //ABBA_TESTRUNNER_H
+#endif // ABBA_TESTRUNNER_H

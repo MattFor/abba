@@ -96,7 +96,7 @@ struct Violation
 
 class MemoryScanner
 {
-public:
+  public:
 	MemoryScanner();
 	~MemoryScanner();
 
@@ -182,7 +182,7 @@ public:
 	[[nodiscard]] std::vector<memscan::Snapshot>  snapshot( const memmap::RegionFilter& filter = {} ) const;
 	[[nodiscard]] std::vector<memscan::Violation> verify( std::span<const memscan::Snapshot> snapshots ) const;
 
-private:
+  private:
 	[[nodiscard]] const MemoryMap* ensureMap() const;
 
 	std::uint32_t pid{};

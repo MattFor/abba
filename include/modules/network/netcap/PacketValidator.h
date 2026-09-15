@@ -2,7 +2,6 @@
 // Created by Grzegorz on 8/23/2026.
 //
 
-
 // It's cross platform!
 
 #ifndef ABBA_PACKETVALIDATOR_H
@@ -14,25 +13,24 @@
 
 class PacketValidator final : public netcap::IPacketValidator
 {
-public:
-    struct Rules
-    {
-        std::optional<std::size_t> min_length{};
-        std::optional<std::size_t> max_length{};
-        bool                       reject_all_zero{
+  public:
+	struct Rules
+	{
+		std::optional<std::size_t> min_length{};
+		std::optional<std::size_t> max_length{};
+		bool                       reject_all_zero{
             false
-        };
-        bool reject_all_same{
-            false
-        };
-    };
+		};
+		bool reject_all_same{
+			false
+		};
+	};
 
-    explicit                               PacketValidator(const Rules& rules);
-    [[nodiscard]] netcap::ValidationResult validate(const netcap::PacketContext& packet) const override;
+	explicit PacketValidator( const Rules& rules );
+	[[nodiscard]] netcap::ValidationResult validate( const netcap::PacketContext& packet ) const override;
 
-private:
-    Rules rules_;
+  private:
+	Rules rules_;
 };
 
-
-#endif //ABBA_PACKETVALIDATOR_H
+#endif // ABBA_PACKETVALIDATOR_H

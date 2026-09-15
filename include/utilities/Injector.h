@@ -5,14 +5,14 @@
 #ifndef ABBA_INJECTOR_H
 #define ABBA_INJECTOR_H
 
-#include <cstdint>  // NOTE: unused on linux
+#include <cstdint> // NOTE: unused on linux
 #include <filesystem>
 
 /// Windows!
 class Injector
 {
-public:
-    [[nodiscard]] static bool inject(std::uint32_t pid, const std::filesystem::path& dllPath);
+  public:
+	[[nodiscard]] static bool inject( std::uint32_t pid, const std::filesystem::path& dllPath );
 };
 
-#endif //ABBA_INJECTOR_H
+#endif // ABBA_INJECTOR_H

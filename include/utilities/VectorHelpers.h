@@ -9,9 +9,9 @@
 #include <algorithm>
 
 template <typename T>
-bool vector_has(const std::vector<T>& vector, const T& element)
+bool vector_has( const std::vector<T>& vector, const T& element )
 {
-    return std::find(vector.begin(), vector.end(), element) != vector.end();
+	return std::find( vector.begin(), vector.end(), element ) != vector.end();
 }
 
-#endif //ABBA_VECTORHELPERS_H
+#endif // ABBA_VECTORHELPERS_H

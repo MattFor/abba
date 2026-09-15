@@ -41,7 +41,7 @@ inline std::size_t pageGranularity() noexcept
 
 class GuardedPage
 {
-public:
+  public:
 	GuardedPage()
 	    : granularity( pageGranularity() )
 	{
@@ -161,7 +161,7 @@ public:
 		this->page  = nullptr;
 	}
 
-private:
+  private:
 	void* block{
 		nullptr
 	};

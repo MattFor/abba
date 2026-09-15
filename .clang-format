@@ -1,0 +1,42 @@
+---
+Language: Cpp
+Standard: c++20
+BasedOnStyle: LLVM
+
+UseTab: ForIndentation
+TabWidth: 4
+IndentWidth: 4
+ContinuationIndentWidth: 8
+
+BreakBeforeBraces: Allman
+NamespaceIndentation: None
+IndentCaseLabels: true
+IndentPPDirectives: BeforeHash
+
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+SpacesInParens: Custom
+SpacesInParensOptions:
+  Other: true
+  InConditionalStatements: true
+  InCStyleCasts: false
+  InEmptyParentheses: false
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+
+ColumnLimit: 0
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: Never
+InsertBraces: true
+
+Cpp11BracedListStyle: false
+SpaceBeforeCpp11BracedList: false
+
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveDeclarations: Consecutive
+AlignTrailingComments: true
+
+SortIncludes: Never
