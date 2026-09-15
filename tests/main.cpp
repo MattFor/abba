@@ -78,39 +78,39 @@ int main()
 {
     constexpr Test tests_settings[] = {
         {
-            "Settings::loadConfig valid config",
-            SettingsTests::load_valid_config
+            .name = "Settings::loadConfig valid config",
+            .function = SettingsTests::load_valid_config
         },
         {
-            "Settings::getIniManager loaded config",
-            SettingsTests::get_loaded_manager
+            .name =     "Settings::getIniManager loaded config",
+            .function = SettingsTests::get_loaded_manager
         },
         {
-            "Settings::read value",
-            SettingsTests::read_value
+            .name ="Settings::read value",
+            .function =SettingsTests::read_value
         },
         {
-            "Settings::reject missing config",
-            SettingsTests::reject_missing_config
+            .name ="Settings::reject missing config",
+            .function =SettingsTests::reject_missing_config
         },
         {
-            "Settings::reject duplicate config",
-            SettingsTests::reject_duplicate_config
+            .name ="Settings::reject duplicate config",
+            .function =SettingsTests::reject_duplicate_config
         },
         {
-            "Settings::missing manager returns null",
-            SettingsTests::missing_manager_returns_null
+            .name ="Settings::missing manager returns null",
+            .function =SettingsTests::missing_manager_returns_null
         },
     };
 
     constexpr Test tests_hashing[] = {
         {
-            "Hashing::one byte returns correct hash",
-            HashingTests::one_byte_correct_hash
+            .name ="Hashing::one byte returns correct hash",
+            .function =HashingTests::one_byte_correct_hash
         },
         {
-            "Hashing::dummy file returns correct hash",
-            HashingTests::dummy_file_correct_hash
+            .name ="Hashing::dummy file returns correct hash",
+            .function =HashingTests::dummy_file_correct_hash
         }
     };
 
