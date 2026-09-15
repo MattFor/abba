@@ -10,6 +10,7 @@
 
 #include <inicpp/inicpp.hpp>
 
+//NOLINTNEXTLINE - Definitely gonna use this later for sure, for sure
 #include "../utilities/Logger.h"
 
 // Get the platform early

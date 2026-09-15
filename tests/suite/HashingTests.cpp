@@ -8,6 +8,7 @@
 
 namespace HashingTests
 {
+    //NOLINTNEXTLINE
     void one_byte_correct_hash()
     {
         if (Hashing::hashFromData({
@@ -20,6 +21,7 @@ namespace HashingTests
         }
     }
 
+    //NOLINTNEXTLINE
     void dummy_file_correct_hash()
     {
         const TempFile file({

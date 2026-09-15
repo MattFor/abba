@@ -6,150 +6,153 @@ set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Shared code
-add_library(
-    abba_core
-    src/settings/Settings.cpp
-    src/utilities/FileOperations.cpp
-    src/utilities/Hashing.cpp
-    src/modules/memory/MemoryScanner.cpp
-    include/modules/memory/MemoryScanner.h
-    src/modules/memory/maps/MemoryMap.cpp
-    include/modules/memory/maps/MemoryMap.h
-    src/modules/memory/maps/LinuxMemory.cpp
-    include/modules/memory/maps/LinuxMemory.h
-    src/modules/memory/maps/WindowsMemory.cpp
-    include/modules/memory/maps/WindowsMemory.h
-    src/modules/network/PacketValidator.cpp
-    include/modules/network/netcap/PacketValidator.h
-    include/modules/network/netcap/HookProtocol.h
-    include/modules/network/netcap/PacketContext.h
-    include/modules/network/netcap/IPacketValidator.h
-)
+add_library(abba_core
+        src/settings/Settings.cpp
+        src/utilities/FileOperations.cpp
+        src/utilities/Hashing.cpp
+        src/modules/memory/MemoryScanner.cpp
+        include/modules/memory/MemoryScanner.h
+        src/modules/memory/maps/MemoryMap.cpp
+        include/modules/memory/maps/MemoryMap.h
+        src/modules/memory/maps/LinuxMemory.cpp
+        include/modules/memory/maps/LinuxMemory.h
+        src/modules/memory/maps/WindowsMemory.cpp
+        include/modules/memory/maps/WindowsMemory.h
+        src/modules/network/PacketValidator.cpp
+        include/modules/network/netcap/PacketValidator.h
+        include/modules/network/netcap/hook/HookProtocol.h
+        include/modules/network/netcap/PacketContext.h
+        include/modules/network/netcap/IPacketValidator.h
 
-if(WIN32)
-    target_sources(
-        abba_core
-        PRIVATE
-        include/modules/network/NetworkMonitor.h
-        src/modules/network/NetworkMonitor.cpp
-        src/utilities/Injector.cpp
-        include/utilities/Injector.h
+)
+if (WIN32)
+    target_sources(abba_core PRIVATE
+            include/modules/network/NetworkMonitor.h
+            src/modules/network/NetworkMonitor.cpp
+            src/utilities/Injector.cpp
+            include/utilities/Injector.h
     )
+endif ()
 
-    target_link_libraries(abba_core PUBLIC psapi)
-endif()
-
-target_include_directories(
-    abba_core
-    PUBLIC
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/lib
+target_include_directories(abba_core
+        PUBLIC
+        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/lib
 )
 
-target_compile_definitions(
-    abba_core
-    PRIVATE
-    $<$<CONFIG:Debug>:LOG=1>
-    $<$<NOT:$<CONFIG:Debug>>:LOG=0>
+target_compile_definitions(abba_core PRIVATE
+        $<$<CONFIG:Debug>:LOG=1>
+        $<$<NOT:$<CONFIG:Debug>>:LOG=0>
 )
 
 # Main program
-add_executable(
-    abba
-    main.cpp
-    include/modules/network/netcap/HookProtocol.h
+add_executable(abba
+        main.cpp
+
+
+        include/modules/network/netcap/hook/HookProtocol.h
 )
 
-target_link_libraries(abba PRIVATE abba_core stdc++exp)
-
-target_compile_definitions(
-    abba
-    PRIVATE
-    $<$<CONFIG:Debug>:LOG=1>
-    $<$<NOT:$<CONFIG:Debug>>:LOG=0>
+target_link_libraries(abba
+        PRIVATE
+        abba_core
+        stdc++exp
 )
 
-if(WIN32)
-    add_library(abba_hook SHARED src/modules/network/HookDll.cpp)
+target_compile_definitions(abba PRIVATE
+        $<$<CONFIG:Debug>:LOG=1>
+        $<$<NOT:$<CONFIG:Debug>>:LOG=0>
+)
+if (WIN32)
+    # ugly, but for now live with it, because i am lazy and
+    # this allows me to just run abba_network_tests and not worry about anything else
+    get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
+
+    add_library(abba_hook SHARED
+            src/modules/network/HookDll.cpp
+    )
     set_target_properties(abba_hook PROPERTIES PREFIX "")
 
-    target_include_directories(
-        abba_hook
-        PRIVATE
-        ${CMAKE_SOURCE_DIR}/include
+    target_include_directories(abba_hook PRIVATE
+            ${CMAKE_SOURCE_DIR}/include
     )
 
     target_link_libraries(abba_hook PRIVATE abba_core ws2_32 stdc++exp)
 
-    target_compile_definitions(
-        abba_hook
-        PRIVATE
-        $<$<CONFIG:Debug>:LOG=1>
-        $<$<NOT:$<CONFIG:Debug>>:LOG=0>
+    target_compile_definitions(abba_hook PRIVATE
+            $<$<CONFIG:Debug>:LOG=1>
+            $<$<NOT:$<CONFIG:Debug>>:LOG=0>
     )
-endif()
+endif ()
+if (WIN32)
+    add_executable(abba_socket_target
+            src/utilities/SocketTarget.cpp
+    )
+    target_link_libraries(abba_socket_target
+            PRIVATE
+            ws2_32
+            stdc++exp
+    )
 
-if(WIN32)
-    add_executable(abba_socket_target src/utilities/SocketTarget.cpp)
-    target_link_libraries(abba_socket_target PRIVATE ws2_32 stdc++exp)
-endif()
+endif ()
 
 # Tests
 enable_testing()
 
-add_executable(
-    abba_tests
-    tests/main.cpp
-    tests/suite/SettingsTests.cpp
-    tests/suite/HashingTests.cpp
-    tests/helpers/TempFile.h
-    tests/helpers/TestRunner.h
-    tests/helpers/GuardedPage.h
-    tests/suite/MemoryMapTests.cpp
-    tests/suite/MemoryScannerTests.cpp
+add_executable(abba_tests
+        tests/main.cpp
+        tests/suite/SettingsTests.cpp
+        tests/suite/HashingTests.cpp
+        tests/helpers/TempFile.h
+        tests/helpers/TestRunner.h
+        tests/suite/MemoryScannerTests.cpp
 )
 
-target_link_libraries(abba_tests PRIVATE abba_core stdc++exp)
-
-target_compile_definitions(
-    abba_tests
-    PRIVATE
-    $<$<CONFIG:Debug>:LOG=1>
-    $<$<NOT:$<CONFIG:Debug>>:LOG=0>
+target_link_libraries(abba_tests
+        PRIVATE
+        abba_core
+        stdc++exp
 )
 
-add_test(NAME abba_tests COMMAND abba_tests)
-
-set_tests_properties(
-    abba_tests
-    PROPERTIES
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+target_compile_definitions(abba_tests PRIVATE
+        $<$<CONFIG:Debug>:LOG=1>
+        $<$<NOT:$<CONFIG:Debug>>:LOG=0>
 )
 
-if(WIN32)
-    add_executable(
-        abba_network_tests
-        tests/main_network.cpp # or wherever you put the self-attach test
+add_test(
+        NAME abba_tests
+        COMMAND abba_tests
+)
+
+set_tests_properties(abba_tests PROPERTIES
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
+if (WIN32)
+    add_executable(abba_network_tests
+            tests/main_network.cpp        # or wherever you put the self-attach test
     )
 
     target_link_libraries(abba_network_tests PRIVATE abba_core stdc++exp)
 
-    target_compile_definitions(
-        abba_network_tests
-        PRIVATE
-        $<$<CONFIG:Debug>:LOG=1>
-        $<$<NOT:$<CONFIG:Debug>>:LOG=0>
+    target_compile_definitions(abba_network_tests PRIVATE
+            $<$<CONFIG:Debug>:LOG=1>
+            $<$<NOT:$<CONFIG:Debug>>:LOG=0>
     )
 
-    add_dependencies(abba_network_tests abba_hook)
+    add_dependencies(abba_network_tests abba_hook abba_socket_target)
 
-    add_custom_command(
-        TARGET abba_network_tests
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                $<TARGET_FILE:abba_hook>
-                $<TARGET_FILE_DIR:abba_network_tests>
+    add_custom_command(TARGET abba_network_tests POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:abba_hook>
+            $<TARGET_FILE_DIR:abba_network_tests>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:abba_socket_target>
+            $<TARGET_FILE_DIR:abba_network_tests>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${MINGW_BIN_DIR}/libwinpthread-1.dll
+            $<TARGET_FILE_DIR:abba_network_tests>
     )
 
     add_test(NAME abba_network_tests COMMAND abba_network_tests)
-endif()
+endif ()

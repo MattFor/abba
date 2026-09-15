@@ -9,6 +9,7 @@
 
 namespace SettingsTests
 {
+    //NOLINTNEXTLINE
     void load_valid_config()
     {
         if (auto& settings = Settings::instance(); !settings.loadConfig("tests/config/test.ini"))
@@ -17,11 +18,12 @@ namespace SettingsTests
         }
     }
 
+    //NOLINTNEXTLINE
     void get_loaded_manager()
     {
         auto& settings = Settings::instance();
 
-        const auto path = "tests/config/test.ini";
+        constexpr auto path = "tests/config/test.ini";
 
         if (const auto* manager = settings.getIniManager(path); manager == nullptr)
         {
@@ -29,11 +31,12 @@ namespace SettingsTests
         }
     }
 
+    //NOLINTNEXTLINE
     void read_value()
     {
         auto& settings = Settings::instance();
 
-        const auto path = "tests/config/test.ini";
+        constexpr auto path = "tests/config/test.ini";
 
         auto* manager = settings.getIniManager(path);
 
@@ -48,6 +51,7 @@ namespace SettingsTests
         }
     }
 
+    //NOLINTNEXTLINE
     void reject_missing_config()
     {
         if (auto& settings = Settings::instance(); settings.loadConfig("config/does_not_exist.ini"))
@@ -56,11 +60,12 @@ namespace SettingsTests
         }
     }
 
+    //NOLINTNEXTLINE
     void reject_duplicate_config()
     {
         auto& settings = Settings::instance();
 
-        const auto path = "tests/config/duplicate_test.ini";
+        constexpr auto path = "tests/config/duplicate_test.ini";
 
         if (!settings.loadConfig(path))
         {
@@ -73,6 +78,7 @@ namespace SettingsTests
         }
     }
 
+    //NOLINTNEXTLINE
     void missing_manager_returns_null()
     {
         auto& settings = Settings::instance();

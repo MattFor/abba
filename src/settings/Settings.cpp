@@ -19,7 +19,6 @@ bool Settings::loadConfig(const std::filesystem::path& configPath)
 {
     const std::filesystem::path absolutePath = std::filesystem::absolute(configPath);
     p("Attempting to load .ini config for {}", absolutePath.string());
-
     if (!std::filesystem::exists(absolutePath))
     {
         p("[ERROR] Config file does not exist: {}", absolutePath.string());
@@ -51,8 +50,8 @@ bool Settings::loadConfig(const std::filesystem::path& configPath)
     }
 
     loaders.emplace_back(Loader{
-        absolutePath,
-        std::make_unique<inicpp::IniManager>(configPath.string())
+        .path = absolutePath,
+        .manager = std::make_unique<inicpp::IniManager>(configPath.string())
     });
 
     p("[SUCCESS] .ini config {} loaded!", absolutePath.string());
