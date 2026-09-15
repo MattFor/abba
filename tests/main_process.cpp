@@ -29,6 +29,10 @@ namespace NetworkTests
 {
     void network_hook_captures_packets();
 }
+namespace IntegrationTests
+{
+    void network_and_memory_attach_together();
+}
 
 int main()
 {
@@ -37,6 +41,12 @@ int main()
           .name = "NetworkMonitor::hook captures packets",
           .function = NetworkTests::network_hook_captures_packets
       }
+    };
+    constexpr Test tests_integration[] = {
+        {
+            .name = "NetworkMonitor and MemoryScanner ",
+            .function = IntegrationTests::network_and_memory_attach_together
+        }
     };
 
     std::size_t total = 0;
@@ -48,6 +58,11 @@ int main()
     {
         return EXIT_FAILURE;
     }
+    if (runTests(tests_integration, passed, failed, total, current))
+    {
+        return EXIT_FAILURE;
+    }
+
 
 	std::print( "\n {}/{} test passed, {} failed\n", passed, total, failed );
 
