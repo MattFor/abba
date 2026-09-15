@@ -73,6 +73,8 @@ if (WIN32)
     )
     set_target_properties(abba_hook PROPERTIES PREFIX "")
 
+    set_target_properties(abba_hook PROPERTIES FOLDER "Internal")
+
     target_include_directories(abba_hook PRIVATE
             ${CMAKE_SOURCE_DIR}/include
     )
@@ -86,13 +88,16 @@ if (WIN32)
 endif ()
 if (WIN32)
     add_executable(abba_socket_target
-            src/utilities/SocketTarget.cpp
+            tests/helpers/SocketTarget.cpp
     )
+
     target_link_libraries(abba_socket_target
             PRIVATE
             ws2_32
             stdc++exp
     )
+
+    set_target_properties(abba_socket_target PROPERTIES FOLDER "Internal")
 
 endif ()
 
@@ -129,6 +134,8 @@ set_tests_properties(abba_tests PROPERTIES
 )
 
 if (WIN32)
+
+    # Network Manager tests
     add_executable(abba_network_tests
             tests/main_network.cpp        # or wherever you put the self-attach test
     )
@@ -155,4 +162,9 @@ if (WIN32)
     )
 
     add_test(NAME abba_network_tests COMMAND abba_network_tests)
+
+    # Integration tests
+
+    # Network scanning and Memory scanning together
+
 endif ()
