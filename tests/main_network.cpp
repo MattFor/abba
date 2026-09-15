@@ -28,7 +28,7 @@
 int main()
 {
     ProcessHarness::SpawnedTarget target{};
-	if ( !spawnSocketTarget( target ) )
+	if ( !spawnTarget( target, ProcessHarness::kSocketTargetExeName ) )
 	{
 		return EXIT_FAILURE;
 	}

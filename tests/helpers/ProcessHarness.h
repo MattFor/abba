@@ -25,6 +25,7 @@
 
 namespace ProcessHarness
 {
+    inline constexpr wchar_t kSocketTargetExeName[] = L"abba_socket_target.exe";
     struct SpawnedTarget
     {
         PROCESS_INFORMATION processInfo{};
@@ -92,14 +93,14 @@ namespace ProcessHarness
 
     };
 
-    inline std::filesystem::path socketTargetPath()
+    inline std::filesystem::path targetExecutablePath(std::filesystem::path exePath)
     {
         wchar_t buffer[MAX_PATH]{};
         GetModuleFileNameW(nullptr, buffer, MAX_PATH);
-        return std::filesystem::path(buffer).parent_path() / L"abba_socket_target.exe";
+        return std::filesystem::path(buffer).parent_path() / exePath;
     }
 
-    [[nodiscard]] inline bool spawnSocketTarget(SpawnedTarget& out)
+    [[nodiscard]] inline bool spawnTarget(SpawnedTarget& out, std::filesystem::path exeName)
     {
         SECURITY_ATTRIBUTES sAttr{};
         sAttr.nLength              = sizeof( sAttr );
@@ -143,7 +144,7 @@ namespace ProcessHarness
         startupInfo.hStdOutput = childStdOutWrite;
         startupInfo.hStdError  = GetStdHandle(STD_ERROR_HANDLE);
 
-        std::wstring exePath = socketTargetPath().wstring();
+        std::wstring exePath = targetExecutablePath(exeName).wstring();
 
         const BOOL created = CreateProcessW(exePath.c_str(), nullptr, // no command-line args needed
                                             nullptr, nullptr, TRUE,   // bInheritHandles - required for the redirect to work
@@ -201,11 +202,6 @@ namespace ProcessHarness
             CloseHandle(target.processInfo.hThread);
         }
     };
-
-
-
-
-
 
 } // namespace
 #endif //ABBA_PROCESSHARNESS_H
