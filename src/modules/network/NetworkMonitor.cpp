@@ -25,7 +25,7 @@
 
 namespace
 {
-[[nodiscard]] bool overlappedRead( HANDLE pipe, HANDLE event, HANDLE stopEvent, void* buffer, DWORD toRead, DWORD& read )
+[[nodiscard]] bool overlappedRead( HANDLE pipe, HANDLE event, void* buffer, DWORD toRead, DWORD& read )
 {
 	OVERLAPPED ov{};
 	ov.hEvent = event;
@@ -39,18 +39,14 @@ namespace
 	{
 		return false;
 	}
-	HANDLE waitHandles[2] = {
-		event,
-		stopEvent
-	};
-	const DWORD waitResult = WaitForMultipleObjects( 2, waitHandles, FALSE, INFINITE );
+	const DWORD waitResult = WaitForSingleObject(event, INFINITE );
 	// Blocks here until data arrives OR CancelIoEx aborts it (ERROR_OPERATION_ABORTED) - this is the reliable cancel point.
 	if ( waitResult == WAIT_OBJECT_0 )
 	{
 		return GetOverlappedResult( pipe, &ov, &read, FALSE );
 	}
 
-	// stopevent fired (or wait failed) - cancel pedning operation, from our own thread
+    p( "[ERROR] WaitForSingleObject failed: {}", GetLastError() );
 	CancelIoEx( pipe, &ov );
 	GetOverlappedResult( pipe, &ov, &read, TRUE );
 	return false;
@@ -67,6 +63,7 @@ std::filesystem::path hookDllPath()
 	GetModuleFileNameW( nullptr, buffer, MAX_PATH );
 	return std::filesystem::path( buffer ).parent_path() / L"abba_hook.dll"; // filename TBD, see below
 }
+
 } // namespace
 
 struct NetworkMonitor::Impl
@@ -77,9 +74,7 @@ struct NetworkMonitor::Impl
 	HANDLE ioEvent{
 		INVALID_HANDLE_VALUE
 	};
-	HANDLE stopEvent{
-		INVALID_HANDLE_VALUE
-	};
+
 	std::thread       serverThread;
 	std::atomic<bool> running{
 		false
@@ -125,7 +120,7 @@ struct NetworkMonitor::Impl
 			netcap::hookproto::FrameHeader header{};
 			DWORD                          read = 0;
 
-			if ( !overlappedRead( pipe, ioEvent, stopEvent, &header, sizeof( header ), read ) || read != sizeof( header ) )
+			if ( !overlappedRead( pipe, ioEvent, &header, sizeof( header ), read ) || read != sizeof( header ) )
 			{
 				break;
 			}
@@ -141,7 +136,7 @@ struct NetworkMonitor::Impl
 			{
 				DWORD payloadRead = 0;
 
-				if ( !overlappedRead( pipe, ioEvent, stopEvent, payload.data(), header.length, payloadRead ) || payloadRead != header.length )
+				if ( !overlappedRead( pipe, ioEvent, payload.data(), header.length, payloadRead ) || payloadRead != header.length )
 				{
 					break;
 				}
@@ -154,10 +149,10 @@ struct NetworkMonitor::Impl
 			packet.data         = payload;
 
 			dispatch( packet );
-		}
+	    }
 
 		running = false;
-	}
+    }
 
 	void dispatch( const netcap::PacketContext& packet )
 	{
@@ -244,8 +239,6 @@ void NetworkMonitor::detach()
 	impl_->pipe = INVALID_HANDLE_VALUE;
 	CloseHandle( impl_->ioEvent );
 	impl_->ioEvent = INVALID_HANDLE_VALUE;
-	CloseHandle( impl_->stopEvent );
-	impl_->stopEvent = INVALID_HANDLE_VALUE;
 }
 
 bool NetworkMonitor::isAttached() const
