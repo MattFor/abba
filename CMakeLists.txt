@@ -65,7 +65,7 @@ target_compile_definitions(abba PRIVATE
 )
 if (WIN32)
     # ugly, but for now live with it, because i am lazy and
-    # this allows me to just run abba_network_tests and not worry about anything else
+    # this allows me to just run abba_process_tests and not worry about anything else
     get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
 
     add_library(abba_hook SHARED
@@ -136,32 +136,34 @@ set_tests_properties(abba_tests PROPERTIES
 if (WIN32)
 
     # Network Manager tests
-    add_executable(abba_network_tests
-            tests/main_network.cpp        # or wherever you put the self-attach test
+    add_executable(abba_process_tests
+            tests/main_process.cpp
+            tests/suite/NetworkTests.cpp
+            # or wherever you put the self-attach test
     )
 
-    target_link_libraries(abba_network_tests PRIVATE abba_core stdc++exp)
+    target_link_libraries(abba_process_tests PRIVATE abba_core stdc++exp)
 
-    target_compile_definitions(abba_network_tests PRIVATE
+    target_compile_definitions(abba_process_tests PRIVATE
             $<$<CONFIG:Debug>:LOG=1>
             $<$<NOT:$<CONFIG:Debug>>:LOG=0>
     )
 
-    add_dependencies(abba_network_tests abba_hook abba_socket_target)
+    add_dependencies(abba_process_tests abba_hook abba_socket_target)
 
-    add_custom_command(TARGET abba_network_tests POST_BUILD
+    add_custom_command(TARGET abba_process_tests POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:abba_hook>
-            $<TARGET_FILE_DIR:abba_network_tests>
+            $<TARGET_FILE_DIR:abba_process_tests>
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:abba_socket_target>
-            $<TARGET_FILE_DIR:abba_network_tests>
+            $<TARGET_FILE_DIR:abba_process_tests>
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${MINGW_BIN_DIR}/libwinpthread-1.dll
-            $<TARGET_FILE_DIR:abba_network_tests>
+            $<TARGET_FILE_DIR:abba_process_tests>
     )
 
-    add_test(NAME abba_network_tests COMMAND abba_network_tests)
+    add_test(NAME abba_process_tests COMMAND abba_process_tests)
 
     # Integration tests
 
