@@ -139,6 +139,7 @@ if (WIN32)
     add_executable(abba_process_tests
             tests/main_process.cpp
             tests/suite/NetworkTests.cpp
+            tests/suite/IntegrationTests.cpp
             # or wherever you put the self-attach test
     )
 

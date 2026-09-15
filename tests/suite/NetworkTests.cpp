@@ -20,20 +20,8 @@ namespace NetworkTests
 {
     void network_hook_captures_packets()
     {
-        ProcessHarness::SpawnedTargetGuard guard{};
-        if (!ProcessHarness::spawnTarget(guard.target, ProcessHarness::kSocketTargetExeName))
-        {
-            throw std::runtime_error("spawn failed");
-        }
-        p("Spawned abba_socket_target_exe, pid={}", guard.target.processInfo.dwProcessId);
-
-        ProcessHarness::StdoutDrain& drain = guard.drain;
-        drain.startDraining(guard.target.stdOutRead);
-
-        if (!drain.waitUntilReady(std::chrono::seconds(5)))
-        {
-            throw std::runtime_error("target never became ready");
-        }
+        ProcessHarness::SpawnedTargetGuard guard(ProcessHarness::kSocketTargetExeName,std::chrono::seconds(5));
+        ProcessHarness::SpawnedTarget target = guard.target();
 
         NetworkMonitor networkMonitor{};
         networkMonitor.addValidator(std::make_shared<PacketValidator>(PacketValidator::Rules{
@@ -55,12 +43,12 @@ namespace NetworkTests
             }
             resultCv.notify_one();
         });
-        if (!networkMonitor.attach(guard.target.processInfo.dwProcessId))
+        if (!networkMonitor.attach(target.processInfo.dwProcessId))
         {
             throw std::runtime_error("[ERROR] Failed to attach target");
         }
 
-        ProcessHarness::pressEnter(guard.target.stdInWrite);
+        ProcessHarness::pressEnter(target.stdInWrite);
 
         // Frames arrive asynchronously so i wait a bit
         constexpr std::size_t expectedViolationsCount = 2;

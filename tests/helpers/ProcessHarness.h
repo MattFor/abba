@@ -179,28 +179,45 @@ namespace ProcessHarness
         WriteFile(stdInWrite, preambule.data(), static_cast<DWORD>(preambule.size()), &preambuleWritten, nullptr);
     }
 
-
-
-
-
-
-
-
-    struct SpawnedTargetGuard
+    class SpawnedTargetGuard
     {
-        SpawnedTarget target{};
-        StdoutDrain   drain;
 
+        SpawnedTarget target_;
+        StdoutDrain   drain_;
+
+
+    public:
+        [[nodiscard]] SpawnedTarget& target() noexcept {return target_;}
+        [[nodiscard]] StdoutDrain& drain() noexcept {return drain_;}
+
+
+        SpawnedTargetGuard() = default;
+
+        SpawnedTargetGuard( const std::filesystem::path& exeName, std::chrono::milliseconds timeout = std::chrono::milliseconds(1000))
+        {
+
+            if (!spawnTarget(target_, exeName))
+            {
+                throw std::runtime_error("spawn failed");
+            }
+
+            drain_.startDraining(target_.stdOutRead);
+            if (!drain_.waitUntilReady(timeout))
+            {
+                throw std::runtime_error("target never became ready");
+            }
+        }
         ~SpawnedTargetGuard()
         {
-            quitTarget(target.stdInWrite);
-            WaitForSingleObject(target.processInfo.hProcess, 2000);
-            drain.join();
-            CloseHandle(target.stdInWrite);
-            CloseHandle(target.stdOutRead);
-            CloseHandle(target.processInfo.hProcess);
-            CloseHandle(target.processInfo.hThread);
+            quitTarget(target_.stdInWrite);
+            WaitForSingleObject(target_.processInfo.hProcess, 2000);
+            drain_.join();
+            CloseHandle(target_.stdInWrite);
+            CloseHandle(target_.stdOutRead);
+            CloseHandle(target_.processInfo.hProcess);
+            CloseHandle(target_.processInfo.hThread);
         }
+
     };
 
 } // namespace
