@@ -188,6 +188,7 @@ bool NetworkMonitor::attach( std::uint32_t process_id )
 	{
 		return false;
 	}
+	detach();
 
 	const std::wstring name = pipeName( process_id );
 
@@ -201,11 +202,20 @@ bool NetworkMonitor::attach( std::uint32_t process_id )
 	const std::wstring eventName  = netcap::hookproto::readyEventNamePrefix() + std::to_wstring( process_id );
 	HANDLE             readyEvent = CreateEventW( nullptr, TRUE /*manual reset*/, FALSE /*initially unset*/, eventName.c_str() );
 	impl_->ioEvent                = CreateEventW( nullptr, TRUE, FALSE, nullptr ); // manual reset
+	if ( readyEvent == nullptr || impl_->ioEvent == nullptr )
+	{
+		if ( readyEvent != nullptr )
+		{
+			CloseHandle( readyEvent );
+		}
+		detach();
+		return false;
+	}
+
 	if ( !Injector::inject( process_id, hookDllPath() ) )
 	{
 		CloseHandle( readyEvent );
-		CloseHandle( impl_->pipe );
-		impl_->pipe = INVALID_HANDLE_VALUE;
+		detach();
 		return false;
 	}
 
@@ -215,8 +225,7 @@ bool NetworkMonitor::attach( std::uint32_t process_id )
 	if ( waitResult != WAIT_OBJECT_0 )
 	{
 		p( "[ERROR] Hook never signaled ready (installHooks timed out or failed)" );
-		CloseHandle( impl_->pipe );
-		impl_->pipe = INVALID_HANDLE_VALUE;
+		detach();
 		return false;
 	}
 
@@ -229,16 +238,28 @@ bool NetworkMonitor::attach( std::uint32_t process_id )
 void NetworkMonitor::detach()
 {
 	impl_->running = false;
-	CancelIoEx( impl_->pipe, nullptr );
+	if ( impl_->pipe != INVALID_HANDLE_VALUE )
+	{
+		CancelIoEx( impl_->pipe, nullptr );
+	}
+
 	if ( impl_->serverThread.joinable() )
 	{
 		impl_->serverThread.join();
 	}
-	DisconnectNamedPipe( impl_->pipe );
-	CloseHandle( impl_->pipe );
-	impl_->pipe = INVALID_HANDLE_VALUE;
-	CloseHandle( impl_->ioEvent );
-	impl_->ioEvent = INVALID_HANDLE_VALUE;
+
+	if ( impl_->pipe != INVALID_HANDLE_VALUE )
+	{
+		DisconnectNamedPipe( impl_->pipe );
+		CloseHandle( impl_->pipe );
+		impl_->pipe = INVALID_HANDLE_VALUE;
+	}
+
+	if ( impl_->ioEvent != INVALID_HANDLE_VALUE && impl_->ioEvent != nullptr )
+	{
+		CloseHandle( impl_->ioEvent );
+		impl_->ioEvent = INVALID_HANDLE_VALUE;
+	}
 }
 
 bool NetworkMonitor::isAttached() const

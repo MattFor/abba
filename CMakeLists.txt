@@ -141,6 +141,7 @@ if (WIN32)
             tests/main_process.cpp
             tests/suite/NetworkTests.cpp
             tests/suite/IntegrationTests.cpp
+            tests/helpers/CapturedViolations.h
             # or wherever you put the self-attach test
     )
 
