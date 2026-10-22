@@ -39,14 +39,14 @@ namespace
 	{
 		return false;
 	}
-	const DWORD waitResult = WaitForSingleObject(event, INFINITE );
+	const DWORD waitResult = WaitForSingleObject( event, INFINITE );
 	// Blocks here until data arrives OR CancelIoEx aborts it (ERROR_OPERATION_ABORTED) - this is the reliable cancel point.
 	if ( waitResult == WAIT_OBJECT_0 )
 	{
 		return GetOverlappedResult( pipe, &ov, &read, FALSE );
 	}
 
-    p( "[ERROR] WaitForSingleObject failed: {}", GetLastError() );
+	p( "[ERROR] WaitForSingleObject failed: {}", GetLastError() );
 	CancelIoEx( pipe, &ov );
 	GetOverlappedResult( pipe, &ov, &read, TRUE );
 	return false;
@@ -149,10 +149,10 @@ struct NetworkMonitor::Impl
 			packet.data         = payload;
 
 			dispatch( packet );
-	    }
+		}
 
 		running = false;
-    }
+	}
 
 	void dispatch( const netcap::PacketContext& packet )
 	{
@@ -279,7 +279,7 @@ bool NetworkMonitor::isAttached() const
 {
 	return false;
 }
-void NetworkMonitor::addValidator( std::shared_ptr<netcap::IPacketValidator> )
+void NetworkMonitor::addValidator( std::shared_ptr<netcap::IPacketValidator> ) const
 {
 }
 void NetworkMonitor::setInvalidPacketCallback( InvalidPacketCallback )

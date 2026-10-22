@@ -17,6 +17,13 @@
  */
 bool Settings::loadConfig( const std::filesystem::path& configPath )
 {
+	// Guards
+	if ( configPath.empty() )
+	{
+		p( "[ERROR] Config path is empty!" );
+		return false;
+	}
+
 	const std::filesystem::path absolutePath = std::filesystem::absolute( configPath );
 	p( "Attempting to load .ini config for {}", absolutePath.string() );
 	if ( !std::filesystem::exists( absolutePath ) )
@@ -28,13 +35,6 @@ bool Settings::loadConfig( const std::filesystem::path& configPath )
 	if ( !std::filesystem::is_regular_file( absolutePath ) )
 	{
 		p( "[ERROR] Config path is not a regular file: {}", absolutePath.string() );
-		return false;
-	}
-
-	// Guards
-	if ( configPath.empty() )
-	{
-		p( "[ERROR] Config path is empty!" );
 		return false;
 	}
 
@@ -58,14 +58,14 @@ bool Settings::loadConfig( const std::filesystem::path& configPath )
 
 inicpp::IniManager* Settings::getIniManager( const std::filesystem::path& configPath )
 {
-	const std::filesystem::path absolutePath = std::filesystem::absolute( configPath );
-	p( "Accessing .ini config for {}", absolutePath.string() );
-
 	if ( configPath.empty() )
 	{
 		p( "[ERROR] Config path is empty!" );
 		return nullptr;
 	}
+
+	const std::filesystem::path absolutePath = std::filesystem::absolute( configPath );
+	p( "Accessing .ini config for {}", absolutePath.string() );
 
 	const auto loader = std::ranges::find_if( this->loaders, [&]( const Loader& config )
 	                                          { return config.path == absolutePath; } );
