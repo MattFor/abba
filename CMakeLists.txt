@@ -111,6 +111,7 @@ add_executable(abba_tests
         tests/helpers/TempFile.h
         tests/helpers/TestRunner.h
         tests/suite/MemoryScannerTests.cpp
+        tests/suite/MemoryMapTests.cpp
 )
 
 target_link_libraries(abba_tests
