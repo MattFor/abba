@@ -110,7 +110,7 @@ int main()
 			break;
 		}
 
-		std::string message = "hello from victim_net";
+		static std::string message = "hello from victim_net";
 		send( clientSock, message.c_str(), static_cast<int>( message.size() ), 0 );
 
 		char buf[512];

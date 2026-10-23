@@ -95,7 +95,7 @@ using RecvFn = int( WSAAPI* )( SOCKET, char*, int, int );
 SendFn g_realSend = nullptr;
 RecvFn g_realRecv = nullptr;
 
-int HookedSend( SOCKET s, const char* buf, int len, int flags )
+int WSAAPI HookedSend( SOCKET s, const char* buf, int len, int flags )
 {
 	auto result = g_realSend( s, buf, len, flags );
 	p( "[DBG] HookedSend result={}\n", result );
@@ -108,7 +108,7 @@ int HookedSend( SOCKET s, const char* buf, int len, int flags )
 	return result;
 }
 
-int HookedRecv( SOCKET s, char* buf, int len, int flags )
+int WSAAPI HookedRecv( SOCKET s, char* buf, int len, int flags )
 {
 	auto result = g_realRecv( s, buf, len, flags );
 	p( "[DBG] HookedRecv result={}\n", result );
@@ -263,8 +263,7 @@ BOOL APIENTRY DllMain( HMODULE module, DWORD reason, LPVOID )
 	{
 		DisableThreadLibraryCalls( module );
 		CreateThread( nullptr, 0, HookMain, nullptr, 0, nullptr );
-		return TRUE;
 	}
 
-	return FALSE;
+	return TRUE;
 }
