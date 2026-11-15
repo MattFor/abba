@@ -1,4 +1,4 @@
-# abba
+# ABBA
 
 [![CI](https://github.com/MattFor/abba/actions/workflows/ci.yml/badge.svg)](https://github.com/MattFor/abba/actions/workflows/ci.yml)
 
