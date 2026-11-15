@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      # .clang-format is not prettier-formatted and is left as the co-author wrote it
+      - name: Prettier
+        run: git ls-files '*.md' '*.yml' '*.json' | xargs npx --yes prettier@3.9.6 --check
+
+  test:
+    name: Build (Linux / GCC 14)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - name: Install CMake
+        run: pipx install cmake==4.2.3
+
+      - name: Configure
+        env:
+          CXX: g++-14
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      # abba_tests does not link yet (tests/suite/MemoryMapTests.cpp is not in CMakeLists.txt)
+      - name: Build
+        run: cmake --build build --target abba
